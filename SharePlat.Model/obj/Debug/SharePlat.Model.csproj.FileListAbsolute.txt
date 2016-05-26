@@ -1,0 +1,4 @@
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Model\bin\Debug\SharePlat.Model.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Model\bin\Debug\SharePlat.Model.pdb
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Model\obj\Debug\SharePlat.Model.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Model\obj\Debug\SharePlat.Model.pdb
