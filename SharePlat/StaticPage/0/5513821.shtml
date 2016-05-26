@@ -1,0 +1,491 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UDT中的epoll</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513821" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">UDT中的epoll</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			epoll 是为处理大量句柄而改进的poll，在UDT中也有支持。UDT使用了内核提供的epoll，主要是epoll_create，epoll_wait，epoll_ctl，UDT定义了CEPollDesc这个结构来管理epoll的描述符和套接字。
+struct CEPollDesc
+{
+&nbsp; &nbsp;int m_iID;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // epoll ID
+&nbsp; &nbsp;std::set&lt;UDTSOCKET&gt; m_sUDTSocksOut;&nbsp; &nbsp; &nbsp; &nbsp;// set of UDT sockets waiting for write events
+&nbsp; &nbsp;std::set&lt;UDTSOCKET&gt; m_sUDTSocksIn;&nbsp; &nbsp; &nbsp; &nbsp; // set of UDT sockets waiting for read events
+&nbsp; &nbsp;std::set&lt;UDTSOCKET&gt; m_sUDTSocksEx;&nbsp; &nbsp; &nbsp; &nbsp; // set of UDT sockets waiting for exceptions
+&nbsp;
+&nbsp; &nbsp;int m_iLocalID;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// local system epoll ID
+&nbsp; &nbsp;std::set&lt;SYSSOCKET&gt; m_sLocals;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // set of local (non-UDT) descriptors
+&nbsp;
+&nbsp; &nbsp;std::set&lt;UDTSOCKET&gt; m_sUDTWrites;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// UDT sockets ready for write
+&nbsp; &nbsp;std::set&lt;UDTSOCKET&gt; m_sUDTReads;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // UDT sockets ready for read
+&nbsp; &nbsp;std::set&lt;UDTSOCKET&gt; m_sUDTExcepts;&nbsp; &nbsp; &nbsp; &nbsp; // UDT sockets with exceptions (connection broken, etc.)
+};
+特别要提醒的是，当对端socket连接中断的时候，也是在m_sUDTReads里的
+UDT还实现了一个类来进行各项操作，实现的有
+create():创建一个epoll，调用了epoll_create
+add_usock():添加一个UDT套接字到epoll
+add_ssock():添加一个系统套接字到epoll，调用了epoll_ctl
+remove_usock():从epoll中移除一个UDT套接字
+remove_ssock():从epoll中移除一个系统套接字，调用了epoll_ctl
+wait():等待epoll事件或者超时，调用了epoll_wait
+release():关闭并释放一个epoll
+&nbsp;
+UDT里对epoll的调用是四段式的，比如add_usock这里，调用顺序是epoll_add_usock()-&gt;CUDT::epoll_add_usock()-&gt;s_UDTUnited.epoll_add_usock()-&gt;CEPoll::add_usock
+&nbsp;
+int epoll_add_usock(int eid, UDTSOCKET u, const int* events)
+{
+&nbsp; &nbsp;return CUDT::epoll_add_usock(eid, u, events);
+}
+&nbsp;
+int CUDT::epoll_add_usock(const int eid, const UDTSOCKET u, const int* events)
+{
+&nbsp; &nbsp;try
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; return s_UDTUnited.epoll_add_usock(eid, u, events);
+&nbsp; &nbsp;}
+&nbsp; &nbsp;catch (CUDTException e)
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; s_UDTUnited.setError(new CUDTException(e));
+&nbsp; &nbsp; &nbsp; return ERROR;
+&nbsp; &nbsp;}
+&nbsp; &nbsp;catch (...)
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; s_UDTUnited.setError(new CUDTException(-1, 0, 0));
+&nbsp; &nbsp; &nbsp; return ERROR;
+&nbsp; &nbsp;}
+}
+&nbsp;
+int CUDTUnited::epoll_add_usock(const int eid, const UDTSOCKET u, const int* events)
+{
+&nbsp; &nbsp;CUDTSocket* s = locate(u);
+&nbsp; &nbsp;int ret = -1;
+&nbsp; &nbsp;if (NULL != s)
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; ret = m_EPoll.add_usock(eid, u, events);
+&nbsp; &nbsp; &nbsp; s-&gt;m_pUDT-&gt;addEPoll(eid);
+&nbsp; &nbsp;}
+&nbsp; &nbsp;else
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; throw CUDTException(5, 4);
+&nbsp; &nbsp;}
+&nbsp;
+&nbsp; &nbsp;return ret;
+}
+&nbsp;
+int CEPoll::add_usock(const int eid, const UDTSOCKET&amp; u, const int* events)
+{
+&nbsp; &nbsp;CGuard pg(m_EPollLock);
+&nbsp;
+&nbsp; &nbsp;map&lt;int, CEPollDesc&gt;::iterator p = m_mPolls.find(eid);
+&nbsp; &nbsp;if (p == m_mPolls.end())
+&nbsp; &nbsp; &nbsp; throw CUDTException(5, 13);
+&nbsp;
+&nbsp; &nbsp;if (!events || (*events &amp; UDT_EPOLL_IN)) &nbsp; &nbsp; &nbsp; //UDT_EPOLL_IN 和UDT_EPOLL_OUT、UDT_EPOLL_ERROR分别是0x1, 0x4, 0x8，可以进行&amp;运算
+&nbsp; &nbsp; &nbsp; p-&gt;second.m_sUDTSocksIn.insert(u);
+&nbsp; &nbsp;if (!events || (*events &amp; UDT_EPOLL_OUT))
+&nbsp; &nbsp; &nbsp; p-&gt;second.m_sUDTSocksOut.insert(u);
+&nbsp;
+&nbsp; &nbsp;return 0;
+}
+&nbsp;
+UDT命名空间提供给应用程序调用接口，可成为API层，API层调用CUDT API，这一层主要做错误处理，捕捉下面两层抛出的错误保存起来交给应用程序使用，CUDT API调用CUDTUnited的实现，如果是UDT SOCKET的socket()，bind()，listen()等，到这层也就结束了，不过epoll要多个第四层，再调用CEPoll的实现。现在来看看CUDTUnited和CEPoll的实现。
+CUDTSocket* s = locate(u);
+&nbsp;调用CUDTUnited::locate()，根据SocketID，也就是UDT Socket handle在CUDTUnited的std::map&lt;UDTSOCKET, CUDTSocket*&gt; m_Sockets中找到对应的CUDTSocket结构，如果找不到，抛出错误，找到了就调用CEPoll的add_usock实现，根据传的event参数，将socket导入相应的队列。之后调用s-&gt;m_pUDT-&gt;addEPoll(eid)
+void CUDT::addEPoll(const int eid)
+{
+&nbsp; &nbsp;CGuard::enterCS(s_UDTUnited.m_EPoll.m_EPollLock); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//这种通过类来实现加锁解锁的，我第一次见，还挺方便。
+&nbsp; &nbsp;m_sPollID.insert(eid);
+&nbsp; &nbsp;CGuard::leaveCS(s_UDTUnited.m_EPoll.m_EPollLock);
+&nbsp;
+&nbsp; &nbsp;if (!m_bConnected || m_bBroken || m_bClosing)
+&nbsp; &nbsp; &nbsp; return;
+&nbsp;
+&nbsp; &nbsp;if (((UDT_STREAM == m_iSockType) &amp;&amp; (m_pRcvBuffer-&gt;getRcvDataSize() &gt; 0)) ||
+&nbsp; &nbsp; &nbsp; ((UDT_DGRAM == m_iSockType) &amp;&amp; (m_pRcvBuffer-&gt;getRcvMsgNum() &gt; 0)))
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_IN, true);
+&nbsp; &nbsp;}
+&nbsp; &nbsp;if (m_iSndBufSize &gt; m_pSndBuffer-&gt;getCurrBufSize())
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; s_UDTUnited.m_EPoll.update_events(m_SocketID, m_sPollID, UDT_EPOLL_OUT, true);
+&nbsp; &nbsp;}
+}
+这里已经开始更新m_sUDTWrites，m_sUDTReads，通过update_events()，如前所述，update_events()也是CEPoll的成员函数。
+&nbsp;
+int CEPoll::update_events(const UDTSOCKET&amp; uid, std::set&lt;int&gt;&amp; eids, int events, bool enable)
+{
+&nbsp; &nbsp;CGuard pg(m_EPollLock);
+&nbsp;
+&nbsp; &nbsp;map&lt;int, CEPollDesc&gt;::iterator p;
+&nbsp;
+&nbsp; &nbsp;vector&lt;int&gt; lost;
+&nbsp; &nbsp;for (set&lt;int&gt;::iterator i = eids.begin(); i != eids.end(); ++ i)
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; p = m_mPolls.find(*i);
+&nbsp; &nbsp; &nbsp; if (p == m_mPolls.end())
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;lost.push_back(*i);
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; else
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if ((events &amp; UDT_EPOLL_IN) != 0)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; update_epoll_sets(uid, p-&gt;second.m_sUDTSocksIn, p-&gt;second.m_sUDTReads, enable); &nbsp;&nbsp;//UDT_EPOLL_IN 和UDT_EPOLL_OUT、UDT_EPOLL_ERROR分别是0x1, 0x4, 0x8，可以进行&amp;运算
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if ((events &amp; UDT_EPOLL_OUT) != 0)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; update_epoll_sets(uid, p-&gt;second.m_sUDTSocksOut, p-&gt;second.m_sUDTWrites, enable);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if ((events &amp; UDT_EPOLL_ERR) != 0)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; update_epoll_sets(uid, p-&gt;second.m_sUDTSocksEx, p-&gt;second.m_sUDTExcepts, enable);
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp;}
+&nbsp;
+&nbsp; &nbsp;for (vector&lt;int&gt;::iterator i = lost.begin(); i != lost.end(); ++ i)
+&nbsp; &nbsp; &nbsp; eids.erase(*i);
+&nbsp;
+&nbsp; &nbsp;return 0;
+}
+&nbsp;
+void update_epoll_sets(const UDTSOCKET&amp; uid, const set&lt;UDTSOCKET&gt;&amp; watch, set&lt;UDTSOCKET&gt;&amp; result, bool enable)
+{
+&nbsp; &nbsp;if (enable &amp;&amp; (watch.find(uid) != watch.end()))
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; result.insert(uid);
+&nbsp; &nbsp;}
+&nbsp; &nbsp;else if (!enable)
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; result.erase(uid);
+&nbsp; &nbsp;}
+}
+&nbsp;
+最后说下wait函数的实现，一样是四段式，就跳过前面三段，直接看第四段
+&nbsp;
+int CEPoll::wait(const int eid, set&lt;UDTSOCKET&gt;* readfds, set&lt;UDTSOCKET&gt;* writefds, int64_t msTimeOut, set&lt;SYSSOCKET&gt;* lrfds, set&lt;SYSSOCKET&gt;* lwfds)
+{
+&nbsp; &nbsp;// if all fields is NULL and waiting time is infinite, then this would be a deadlock &nbsp; 都空的的话，会死锁，抛出异常
+&nbsp; &nbsp;if (!readfds &amp;&amp; !writefds &amp;&amp; !lrfds &amp;&amp; lwfds &amp;&amp; (msTimeOut &lt; 0))
+&nbsp; &nbsp; &nbsp; throw CUDTException(5, 3, 0);
+&nbsp;
+&nbsp; &nbsp;// Clear these sets in case the app forget to do it. &nbsp;清空
+&nbsp; &nbsp;if (readfds) readfds-&gt;clear();
+&nbsp; &nbsp;if (writefds) writefds-&gt;clear();
+&nbsp; &nbsp;if (lrfds) lrfds-&gt;clear();
+&nbsp; &nbsp;if (lwfds) lwfds-&gt;clear();
+&nbsp;
+&nbsp; &nbsp;int total = 0;
+&nbsp;
+&nbsp; &nbsp;int64_t entertime = CTimer::getTime();
+&nbsp; &nbsp;while (true)
+&nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; CGuard::enterCS(m_EPollLock);
+&nbsp;
+&nbsp; &nbsp; &nbsp; map&lt;int, CEPollDesc&gt;::iterator p = m_mPolls.find(eid);
+&nbsp; &nbsp; &nbsp; if (p == m_mPolls.end())
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;CGuard::leaveCS(m_EPollLock);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;throw CUDTException(5, 13);
+&nbsp; &nbsp; &nbsp; }
+&nbsp;
+&nbsp; &nbsp; &nbsp; if (p-&gt;second.m_sUDTSocksIn.empty() &amp;&amp; p-&gt;second.m_sUDTSocksOut.empty() &amp;&amp; p-&gt;second.m_sLocals.empty() &amp;&amp; (msTimeOut &lt; 0))
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// no socket is being monitored, this may be a deadlock &nbsp;都空的的话，会死锁，抛出异常
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;CGuard::leaveCS(m_EPollLock);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;throw CUDTException(5, 3);
+&nbsp; &nbsp; &nbsp; }
+&nbsp;
+&nbsp; &nbsp; &nbsp; // Sockets with exceptions are returned to both read and write sets. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;把m_sUDTReads和m_sUDTExcepts都读到readfds里
+&nbsp; &nbsp; &nbsp; if ((NULL != readfds) &amp;&amp; (!p-&gt;second.m_sUDTReads.empty() || !p-&gt;second.m_sUDTExcepts.empty()))
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;*readfds = p-&gt;second.m_sUDTReads;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for (set&lt;UDTSOCKET&gt;::const_iterator i = p-&gt;second.m_sUDTExcepts.begin(); i != p-&gt;second.m_sUDTExcepts.end(); ++ i)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; readfds-&gt;insert(*i);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;total += p-&gt;second.m_sUDTReads.size() + p-&gt;second.m_sUDTExcepts.size();
+&nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; if ((NULL != writefds) &amp;&amp; (!p-&gt;second.m_sUDTWrites.empty() || !p-&gt;second.m_sUDTExcepts.empty())) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//把m_sUDTWrites和m_sUDTExcepts都读到writefds里
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;*writefds = p-&gt;second.m_sUDTWrites;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for (set&lt;UDTSOCKET&gt;::const_iterator i = p-&gt;second.m_sUDTExcepts.begin(); i != p-&gt;second.m_sUDTExcepts.end(); ++ i)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; writefds-&gt;insert(*i);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;total += p-&gt;second.m_sUDTWrites.size() + p-&gt;second.m_sUDTExcepts.size();
+&nbsp; &nbsp; &nbsp; }
+&nbsp;
+&nbsp; &nbsp; &nbsp; if (lrfds || lwfds) &nbsp; &nbsp; //读系统套接字
+&nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;#ifdef LINUX
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const int max_events = p-&gt;second.m_sLocals.size();
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;epoll_event ev[max_events];
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;int nfds = ::epoll_wait(p-&gt;second.m_iLocalID, ev, max_events, 0);
+&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for (int i = 0; i &lt; nfds; ++ i)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if ((NULL != lrfds) &amp;&amp; (ev[i].events &amp; EPOLLIN))
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;lrfds-&gt;insert(ev[i].data.fd);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;++ total;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if ((NULL != lwfds) &amp;&amp; (ev[i].events &amp; EPOLLOUT))
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;lwfds-&gt;insert(ev[i].data.fd);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;++ total;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;#else
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//currently "select" is used for all non-Linux platforms.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//faster approaches can be applied for specific systems in the future.
+&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//"select" has a limitation on the number of sockets
+&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;fd_set readfds;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;fd_set writefds;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FD_ZERO(&amp;readfds);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FD_ZERO(&amp;writefds);
+&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for (set&lt;SYSSOCKET&gt;::const_iterator i = p-&gt;second.m_sLocals.begin(); i != p-&gt;second.m_sLocals.end(); ++ i)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (lrfds)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FD_SET(*i, &amp;readfds);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (lwfds)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FD_SET(*i, &amp;writefds);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}
+&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;timeval tv;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;tv.tv_sec = 0;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;tv.tv_usec = 0;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (::select(0, &amp;readfds, &amp;writefds, NULL, &amp;tv) &gt; 0)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; for (set&lt;SYSSOCKET&gt;::const_iterator i = p-&gt;second.m_sLocals.begin(); i != p-&gt;second.m_sLocals.end(); ++ i)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (lrfds &amp;&amp; FD_ISSET(*i, &amp;readfds))
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; lrfds-&gt;insert(*i);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ++ total;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (lwfds &amp;&amp; FD_ISSET(*i, &amp;writefds))
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; lwfds-&gt;insert(*i);
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ++ total;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;#endif
+&nbsp; &nbsp; &nbsp; }
+&nbsp;
+&nbsp; &nbsp; &nbsp; CGuard::leaveCS(m_EPollLock);
+&nbsp;
+&nbsp; &nbsp; &nbsp; if (total &gt; 0)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;return total;
+&nbsp;
+&nbsp; &nbsp; &nbsp; if ((msTimeOut &gt;= 0) &amp;&amp; (int64_t(CTimer::getTime() - entertime) &gt;= msTimeOut * 1000LL))
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;throw CUDTException(6, 3, 0);
+&nbsp;
+&nbsp; &nbsp; &nbsp; CTimer::waitForEvent();
+&nbsp; &nbsp;}
+&nbsp;
+&nbsp; &nbsp;return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

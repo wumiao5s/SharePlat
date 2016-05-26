@@ -1,0 +1,292 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>初始JQuery</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513230" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">初始JQuery</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			JQuery语法结构
+JQuery语句主要包含三大部分：$(),doucment和ready().
+这三大部分在JQuery中分别被称为工厂函数，选择器和方法。
+$()=JQuery()
+当$()的参数是DOM对象时，该对象不需要使用双引号包裹起来，如果获取的是doucment对象，则写作$(doucment).
+&nbsp;
+
+ $(function () {
+            $("li").mousemove(function () {
+                $(this).css("background","red");
+            }).mouseout(function () {
+                $(this).css("background","");
+            })
+        })
+自动迭代
+
+DOM对象和JQuery对象转换
+
+//onload = function () {
+        //    var $dom = $("#myid");
+        //    var dom = $dom[0];
+        //    dom.onclick = function () {
+        //        if(dom.checked==true){
+        //            alert("成功");
+        //        }
+        //    }
+        //}
+
+可以将DOM对象转换成JQuery对象，以使用JQuery提供的丰富功能，也可以将JQuery对象转换成DOM对象，使用DOM对象特有的成员提供的功能。
+JQuery选择器
+基本选择器
+主要包括：标签选择器，类选择器，ID选择器，并集选择器，交集选择器和全局选择器。
+$("p").click(function(){
+　　$("span").css(&rdquo;background&ldquo;,"#FF6")
+})；
+层次选择器：
+后代选择器，子选择器，相邻选择器，和同辈选择器。
+$("h2").click(function(){
+　　$("#menu span").css(&rdquo;background&ldquo;,"#FF6")；
+})；
+单击h2元素时，为#menu下的span元素添加色为#FF6的背景颜色的功能
+$("h2").click(function(){
+　　$("body span").css(&rdquo;background&ldquo;,"#FF6")；
+$("body&gt;span").css(&rdquo;background&ldquo;,"#FF7")；
+})；
+属性选择器
+$("h2").click(function(){
+　　$("h2初始JQuery").css(&rdquo;background&ldquo;,"#FF6")；
+})；
+单击h2元素时,为包含属性名为title的h2元素添加颜色为#FF6的背景颜色的功能。
+基本过滤选择器
+:first&nbsp;选取第一个元素
+：last&nbsp;选取最后一个元素
+：even选取索引是偶数的所有元素（index从0开始）
+：odd选取索引是奇数的所有元素（index从0开始）
+：gt（index）选取索引大于index的元素（index从0开始）
+：eq（index）选取索引等于index的元素（index从0开始）
+：lt（index）选取索引小于index的元素（index从0开始）
+：header&nbsp;选取所有标题元素，如h1-h6
+：focus&nbsp;选取当前获取焦点的元素
+$("tr:even").css("background-color","#F63");
+&nbsp;可见性过滤选择器
+：visible&nbsp;选取所有可见的元素
+：hidden&nbsp;选取所有隐藏的元素
+
+ $(function () {
+            $("p").click(function() {
+                $("p:hidden").show();
+                $("p:visible").hide();
+                $("li:even").css("background-color", "#CCC");
+                $(".s").css("background-color", "#FF99CC");
+            })  
+        })
+可见性过滤选择器
+
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

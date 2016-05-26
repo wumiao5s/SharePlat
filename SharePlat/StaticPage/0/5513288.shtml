@@ -1,0 +1,234 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>初始JavaScript</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513288" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">初始JavaScript</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			一：JavaScript是一种描述性语言，它是一种基于对象(Object)和事件驱动(Event Drivent)的，并且具有安全性能的脚本语言。特点：	&gt;JavaScript主要用来向HTML页面中添加交互行为。	&gt;JavaScript是一种脚本语言，语法和Java类似	&gt;JavaScript一般用来编写客户端的脚本	&gt;JavaScript是一种解释性语言，边执行边解释
+二：JavaScript 由三部分组成										ECMAScript标准(它是一个描述，规定了脚本语言的所有属性，方法和对象的标准)							浏览器对象模型(Browser Object Model , BOM)							文档对象模型(Document Object Model ,DOM)
+三：JavaScript的执行原理	1.浏览器客户端向服务器端发送请求：即客户要访问的页面	2.数据处理：服务器端将某个包含JavaScript的页面进行处理	3.发送响应：服务器端将含有JavaScript的HTML脚本文件处理页面发送到客户端，	  后由浏览器客户端从上往下依次解析HTML标签和JavaScript，并将页面效果呈现给客户
+使用客户端脚本的好处：	包含JavaScript的页面只需要下载一次即可，这样能减少不必要的网络通信	JavaScript程序由浏览器客户端执行，而不是由服务器端执行，能减少服务器端的压力
+----------------------------------------变量的声明和使用----------------------------------------------一：JavaScript是一种弱类型语言 ，没有明确的数据类型，但是并不代表没有数据类型！也就是说咋声明变量时	不需要指定变量的类型在JavaScript中变量的声明都是用var统一声明的 注意！！区分大小写 而且不能是js中的关键字eg：	var width=20;	var x,y,z=10;这样声明变量在js中也是合法的，并不会报语法错误eg：	var num;	var number=	var str=String("12");
+二：JavaScript中的六大数据类型：
+	undefined(未定义类型)	null(空类型)	number(数值类型)	String(字符串类型)	boolean(布尔类型)	Object(数组，函数对象类型)
+	※只有 0 "" undefind null NaN false 是默认为false其他的都默认为true! 
+三：String对象的常用方法	toString():返回字符串	toLowerCase():将字符串转换成小写	toUpperCase():将字符串转换成大写	charAt(index):返回指定位置的字符	indexOf(str,index):查找某个指定的字符串在字符串中首次出现的位置	substring(index1,index2):返回指定索引index1到index2中的字符串 (前闭后开原则)	split(str):将字符串根据指定的str分割为字符串数组
+四：在JavaScript中 &lsquo;==&rsquo;和&lsquo;===&rsquo;是不同的意思   &lsquo;==&rsquo;比较的是值 &lsquo;===&rsquo;比较的是值和数据类型
+五：typeof()运算符  typeof()是运算符而并不是函数	typeof()的作用是获取一种变量究竟是那种数据类型
+六：数组	创建数组的方法		var 数组名=new Array(size);	在js中创建数据并赋值有多种方式	eg：		1.var array=new Array();		2.var array=new Array("1","2","3");		3.var array=new Array(2);			  array[0]=1;		      array[1]=2;			  array[5]=6;  注意，在js中是没有数组下标越界这一说法的，其余没有赋值的部分会自动用undefind来填充！		4.var array=["1","2","3"];
+七：数组中常用的属性和方法	属性： length  设置或返回数组中的元素的数目	方法： join()  把数组的所有元素放入一个字符串，通过一个分隔符来进行分割连接		   sort()  对数组进行排序		   push()  向数组末尾添加一个或更多的元素，并返回新的长度		八：常用的输入输出(在js中字符串最好使用'' 在HTML中字符串最好使用"")	警告弹框(只有一个确定按钮)		alert('弹出的内容');	提示弹框(可以接受文本)		prompt('提示信息","输入框的默认信息')  注：要默认输入框没有内容可将第二个参数设置为"",在IE浏览器中如果没有设置第二个属性则输入框中显示undefind其他浏览器则不显示内容	确认取消框(返回true 或false)		confirm('显示的文本')
+九：JavaScript中常用的语法--函数	常用的系统函数：		isNaN()   :用来判断一个变量是否是非数值类型  若是非数值类型则返回true 若不是非数值类型则返回flase		eg:			var flag1=isNaN("12.5");  //返回值是 false			var flag2=isNaN("12.5s"); //返回值是 true			var flag3=isNaN("45.8");  //返回值是 false			var flag4=isNaN(.45);	  //返回值是 false  会自动补全为0.45			var flag5=isNaN(5/0);	  //返回值是Infinity  表示无限大小的数据
+		parseInt() :可解析一个字符串返回一个整数		eg：			parseInt('78.89'); //返回78			parseInt('4567adsh');//返回4567			parseInt('this36');	//返回NaN(not a number)
+		parseFloat():可解析一个字符串返回一个浮点数		eg：			parseFloat('4567sdas'); //返回值为4567			parseFloat('45.58');//返回值为45.58			parseFloat('cloas785');//返回为NaN			parseFloat('.45');	//返回值为0.45
+自定义函数
+		自定义函数用关键字function		eg：			funtion 函数名(参数1,参数2,参数3){				[return 返回值]			}		匿名函数			function(){    //是没有名字的，一般用变量接收  掉用时直接调用变量名就成				....			}
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

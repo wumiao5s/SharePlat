@@ -1,0 +1,312 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>html表单的各种输入控件</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513102" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">html表单的各种输入控件</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			表单的输入控件主要是input和select。其中input可以是多种类型，通过type属性来进行定义，type可以取值是text,radio,checkbox,password,submit,reset.
+select是和option组合使用的。后台要想获得表单的值，是通过name属性的值来获得用户的输入。
+后台获取的值：
+input-text-name
+input-redio-name-value
+input-checkbox-name-value
+input-password-name
+input-textarea-name
+select-option-name-value
+下面是综合应用这些组成一个注册表单。
+
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+ &lt;meta charset="utf-8"&gt;
+ &lt;title&gt;&lt;/title&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;center&gt;
+  &lt;h1 style="color:blue;"&gt;注册表单&lt;/h1&gt;
+  &lt;hr/&gt;
+  &lt;form name="reg" action="regsuccess.html" method="post"&gt;
+
+  &lt;table cellspacing="0" cellpadding="0" border="0"&gt;
+   &lt;tr&gt;
+    &lt;td&gt;用户名:&lt;/td&gt;
+    &lt;td&gt;&lt;input type="text" name="username"/&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;密码：&lt;/td&gt;
+    &lt;td&gt;&lt;input type="password" name="pwd"/&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;确认密码：&lt;/td&gt;
+    &lt;td&gt;&lt;input type="password" name="confirmpwd"/&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;电子邮箱：&lt;/td&gt;
+    &lt;td&gt;&lt;input type="text" name="email"/&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;性别：&lt;/td&gt;
+    &lt;td&gt;&lt;input type="radio" name="gender" value='1' checked/&gt;男&lt;input type="radio" name="gender" value='0'/&gt;女&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;学历：&lt;/td&gt;
+    &lt;td&gt;
+     &lt;select name="edulevel"/&gt;
+      &lt;option value="-1"&gt;--请选择学历--&lt;/option&gt;
+      &lt;option value="0"&gt;小学&lt;/option&gt;
+      &lt;option value="1"&gt;初中&lt;/option&gt;
+      &lt;option value="2"&gt;高中&lt;/option&gt;
+      &lt;option value="3"&gt;学士&lt;/option&gt;
+      &lt;option value="4"&gt;硕士&lt;/option&gt;
+      &lt;option value="5"&gt;博士&lt;/option&gt;
+      &lt;option value="6"&gt;博士后&lt;/option&gt;
+    &lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;爱好：&lt;/td&gt;
+    &lt;td&gt;
+     &lt;input type="checkbox" name="hoby" value="reading"/&gt;读书
+     &lt;input type="checkbox" name="hoby" value="movie"/&gt;电影
+     &lt;input type="checkbox" name="hoby" value="shopping"/&gt;购物
+     &lt;input type="checkbox" name="hoby" value="internet"/&gt;上网
+     &lt;input type="checkbox" name="hoby" value="other"/&gt;其他
+    &lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;上传头像：&lt;/td&gt;
+    &lt;td&gt;&lt;input type="file"/&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;服务协议：&lt;/td&gt;
+    &lt;td&gt;&lt;textarea rows="10" cols="40"&gt;rule 1&lt;/textarea&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td&gt;是否接受协议：&lt;/td&gt;
+    &lt;td&gt;&lt;input type="checkbox"name='rule'value='accept'/&gt;接受&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+    &lt;td colspan="2" align="center"&gt;&lt;input type="submit" value="注册"&gt;
+    &lt;input type="reset" value="重置"/&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+
+  &lt;/table&gt;
+
+  &lt;/form&gt;
+ &lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+显示效果如下：
+
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

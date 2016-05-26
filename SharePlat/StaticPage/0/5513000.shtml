@@ -1,0 +1,204 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>JavaScript中 Promise的学习以及使用</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513000" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">JavaScript中 Promise的学习以及使用</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

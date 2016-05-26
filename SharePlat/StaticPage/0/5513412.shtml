@@ -1,0 +1,550 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Android消息处理机制(Handler 与Message)---01</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513412" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">Android消息处理机制(Handler 与Message)---01</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			　　一、handler的使用场景为么会有handler？（部分内容图片摘自http://www.runoob.com/w3cnote/android-tutorial-handler-message.html）
+　　
+　　二、handler的消息处理机制
+　　在Android中提供了一种异步回调机制Handler,使用它，我们可以在完成一个很长时间的任务后做出相应的通知。
+
+UI线程:就是我们的主线程,系统在创建UI线程的时候会初始化一个Looper对象,同时也会创建一个与其关联的MessageQueue;
+Handler:作用就是发送与处理信息,如果希望Handler正常工作,在当前线程中要有一个Looper对象
+Message:Handler接收与处理的消息对象
+MessageQueue:消息队列,先进先出管理Message,在初始化Looper对象时会创建一个与之关联的MessageQueue;
+Looper:每个线程只能够有一个Looper,管理MessageQueue,不断地从中取出Message分发给对应的Handler处理！
+
+　　通俗一点讲：当我们的子线程想修改Activity中的UI组件时,我们可以新建一个Handler对象,通过这个对象向主线程发送信息;而我们发送的信息会先到主线程的MessageQueue进行等待,由Looper按先入先出顺序取出,再根据message对象的what属性分发给对应的Handler进行处理！
+　　三、Handler的相关方法
+　　在使用android的消息的处理机制的时候：一般是有两种手段，
+　　1、该message自己绑定到目标handler后，自行进入messageQueue,等待handler接受处理。Message方法：public static Message obtain(Handler h, int what,&nbsp;int arg1, int arg2, Object obj) ,通过该方法可以获得一个消息：Message message = Message.obtain(handler, 33, 2, 3, "hello");
+发送消息的方式，有一点将自己绑定好了被发射的感觉，message.sendToTarget(); ---被动（意会）
+　　2、handler主动设置要发送的消息的各个属性值：arg1，arg2，obj，what。方法：public final Message obtainMessage(int what, int arg1, int arg2, Object obj)&nbsp;通过该方法也可以获得一个消息：比如Message message = handler.obtainMessage(3, 1, 2, "java");
+然后将设置好的消息，由handler发送出去：handler.sendMessage(message);----主动（自己意会的）。下面十几个常用方法：
+
+void&nbsp;handleMessage(Message msg):处理消息的方法,使用handleMessage去处理消息，里面的参数Message msg既是在messageQueue里面取出的消息message~
+sendEmptyMessage(int what):发送空消息
+sendEmptyMessageDelayed(int what,long delayMillis):指定延时多少毫秒后发送空信息
+sendMessage(Message msg):立即发送信息
+sendMessageDelayed(Message msg):指定延时多少毫秒后发送信息
+final boolean&nbsp;hasMessage(int what):检查消息队列中是否包含what属性为指定值的消息 如果是参数为(int what,Object object):除了判断what属性,还需要判断Object属性是否为指定对象的消息
+
+//========================
+&nbsp;//废话不多说直接上demo:由上图中的图2可以看出消息的处理是在一条全新的线程中进行的，因此关键的是要新建一个thread，在它的run方法中执行消息的发送，
+// 首先是被动方式：
+
+ 1 import android.os.Bundle;
+ 2 import android.os.Handler;
+ 3 import android.os.Message;
+ 4 import android.app.Activity;
+ 5 import android.view.View;
+ 6 import android.widget.Button;
+ 7 
+ 8 
+ 9 /**
+10  * 此处重点熟悉message的属性~，将message绑定到目标handler，然后直接使用message的方法将消息发送~，被动发送。
+11  * @author 
+12  * 
+13  */
+14 
+15 // 在安卓开发中是绝对不能使用UI主线程去访问网络 的，一定是要开一条新的线程去访问然后把结果返回
+16 public class MainActivity extends Activity {
+17     private Button button;
+18 
+19     // handler对象，用来接收消息~
+20     private Handler handler = new Handler() {
+21         @Override
+22         public void handleMessage(android.os.Message msg) {  //这个是发送过来的消息
+23             // 处理从子线程发送过来的消息
+24             int arg1 = msg.arg1;  //获取消息携带的属性值
+25             int arg2 = msg.arg2;
+26             int what = msg.what;
+27             Object result = msg.obj;
+28             System.out.println("-arg1---&gt;&gt;" + arg1);
+29             System.out.println("-arg2---&gt;&gt;" + arg2);
+30             System.out.println("-what---&gt;&gt;" + what);
+31             System.out.println("-result---&gt;&gt;" + result);
+32             Bundle bundle = msg.getData(); // 用来获取消息里面的bundle数据
+33             System.out.println("-getData---&gt;&gt;"
+34                     + bundle.getStringArray("strs").length);
+35         };
+36     };
+37 
+38     @Override
+39     protected void onCreate(Bundle savedInstanceState) {
+40         super.onCreate(savedInstanceState);
+41         setContentView(R.layout.activity_main);
+42         button = (Button) findViewById(R.id.button1);
+43 
+44         button.setOnClickListener(new View.OnClickListener() {
+45             @Override
+46             public void onClick(View v) {
+47                 // TODO Auto-generated method stub
+48                 // 启动一个子线程
+49                 new Thread(new MyThread()).start();  //一定要在这里面启动！
+50             }
+51         });
+52     }
+53 
+54     public class MyThread implements Runnable {
+55         @Override
+56         public void run() {   //run方法里面写要发送的消息对象，并对消息携带的信息进行定义！！
+57             // TODO Auto-generated method stub
+58 
+59             // 第一种方式：获取消息
+60             // Message message = Message.obtain();
+61             // message.what = 1;
+62             // message.arg1 = 2;
+63             // message.arg2 = 3;
+64             // message.obj = "jack";
+65             // handler.sendMessage(message);
+66 
+67             // 第二种方式
+68             // Message message = Message.obtain(handler);
+69             // message.what = 1;
+70             // message.arg1 = 2;
+71             // message.arg2 = 3;
+72             // message.obj = "jack";
+73             // //handler.sendMessage(message);
+74             // //此时在构造方法里面已经将message的target绑定了handler不需要再次发送了。
+75             // message.sendToTarget();
+76 
+77             // 第三种方式，和上面是没有区别的。。
+78             // Message message = Message.obtain(handler, 33);
+79             // message.arg1 = 2;
+80             // message.arg2 = 3;
+81             // message.obj = "jack";
+82             // message.sendToTarget();
+83 
+84             // 第4种方式这几种方式都是大同小异，只不过是内部封装了而已，使用的时候根据实际需要就可以了。
+85             Message message = Message.obtain(handler, 33, 2, 3, "hello");
+86             Bundle data = new Bundle();  //message也可以携带复杂一点的数据比如：bundle对象。
+87             data.putStringArray("strs", new String[] { "c", "c++", "java" });
+88             message.setData(data);
+89             message.sendToTarget(); // 不可忘！
+90         }
+91     }
+92 }
+
+// ================================布局文件就不给出了，就是一个按钮然后为该按钮绑定了事件。
+// =============================handler的主动发送消息
+&nbsp;
+
+ 1 import android.os.Bundle;
+ 2 import android.os.Handler;
+ 3 import android.os.Message;
+ 4 import android.os.SystemClock;
+ 5 import android.app.Activity;
+ 6 import android.view.Menu;
+ 7 import android.view.View;
+ 8 import android.view.View.OnClickListener;
+ 9 import android.widget.Button;
+10 
+11 /**
+12  * 此处主要是使用handler的主动抓取、发送message功能！在messaQequue里面
+13  * 
+14  * @author15  * 
+16  */
+17 public class MainActivity extends Activity implements OnClickListener {
+18     private Button button, button2;
+19 
+20     // Handler可以接受发送消息，从消息队列中提取消息用于更新UI，这里都没有对UI进行操作，主要是介绍如何定义自己的message如何发送这个message，最后将会给一个demo
+21     private Handler handler = new Handler() {
+22         @Override
+23         public void handleMessage(android.os.Message msg) {
+24 
+25             System.out.println("-arg1---&gt;" + msg.arg1);
+26             System.out.println("-arg2---&gt;" + msg.arg2);
+27             System.out.println("-what---&gt;" + msg.what);
+28             System.out.println("-obj---&gt;" + msg.obj);
+29         };
+30     };
+31 
+32     @Override
+33     protected void onCreate(Bundle savedInstanceState) {
+34         super.onCreate(savedInstanceState);
+35         setContentView(R.layout.activity_main);
+36         button = (Button) findViewById(R.id.button1);
+37         button2 = (Button) findViewById(R.id.button2);
+38 
+39         button.setOnClickListener(this);
+40         button2.setOnClickListener(this);
+41     }
+42 
+43     @Override
+44     public void onClick(View v) {
+45         // TODO Auto-generated method stub
+46         switch (v.getId()) {
+47         case R.id.button1:
+48             new Thread(new Runnable() {  //使用匿名内部类的方式，这个无难点吧。。。
+49                 @Override
+50                 public void run() {
+51                     // TODO Auto-generated method stub
+52                     // handler发送消息的第一种方式
+53                     // handler.sendEmptyMessage(3);
+54 
+55                     // handler发送消息的第二种方式,第二个参数是指定在指定的时间上发送消息，这个是确定的某个时间！
+56                     // 可以通过获取当前的系统时间后SystemClock.uptimeMillis()再加上某个时间，如果给出的时间小于当前时间则立即发送，亲测　　　　　　　　　　　　　//而且感觉这个功能很bug的，在特定的时间，需要我们人为的去计算：SystemClock.uptimeMillis()+myTime(这个是你想在多少毫秒后启动的毫秒值)                          
+57                     // handler.sendEmptyMessageAtTime(3, X+3000);
+59                     // handler发送消息的第三种方式，这个效果是在3000毫秒后延迟。
+60                     // handler.sendEmptyMessageDelayed(3, 3000);
+61 
+62                     // handler发送消息的第四种方式
+63                     // Message message = Message.obtain(); //这个是使用message被动得到
+64                     // Message message = handler.obtainMessage(); //
+65                     // handler的主动获取消息,在源码方面一样！无区别。
+66                     // message.arg1 = 1;
+67                     // message.arg2 = 2;
+68                     // message.obj = "java";
+69                     // message.what = 4;
+70                     // 使用handler发送消息的第五种方式，原理都是一样的~　　　　　　　　　　　　　　//我最习惯还是message自己搞自己的事情别去干发送的活，message需要携带的属性由他自己搞，剩下的发送接收处理的体力劳动由handler搞。
+71                     Message message = handler.obtainMessage(3, 1, 2, "java");
+72                     handler.sendMessage(message);
+73                 }
+74             }).start();  //记得启动
+75             break;
+76         case R.id.button2:
+77             // 第二个按钮使用post方式发送消息,该方法需要一个runnable的实例，使用匿名内部类的方式实现。
+78             // 直接使用一个匿名内部类Runnable来执行1.获取消息对象；2.发送消息对象。换汤不换药，通过看源码也可以知道背后的实现都是一个道理。
+79             handler.post(new Runnable() {
+80                 @Override
+81                 public void run() {
+82                     // TODO Auto-generated method stub
+83                     Message message = handler.obtainMessage(23, 21, 22, "postMessage");
+84                     handler.sendMessage(message);
+85                 }
+86             });
+87             break;
+88         }
+89     }
+90 
+91 }
+
+//-----------------------------------具体应用handler来更新UI
+//========================================
+
+  2 
+  3 import java.io.ByteArrayOutputStream;
+  4 import java.io.IOException;
+  5 import java.io.InputStream;
+  6 
+  7 import org.apache.http.HttpEntity;
+  8 import org.apache.http.HttpResponse;
+  9 import org.apache.http.client.HttpClient;
+ 10 import org.apache.http.client.methods.HttpGet;
+ 11 import org.apache.http.impl.client.DefaultHttpClient;
+ 12 import org.apache.http.util.EntityUtils;
+ 13 
+ 14 import android.os.Bundle;
+ 15 import android.os.Handler;
+ 16 import android.os.Message;
+ 17 import android.app.Activity;
+ 18 import android.app.ProgressDialog;
+ 19 import android.graphics.BitmapFactory;
+ 20 import android.view.View;
+ 21 import android.widget.Button;
+ 22 import android.widget.ImageView;
+ 23 
+ 24 public class MainActivity extends Activity {
+ 25     private Button button;
+ 26     private ImageView imageView;
+ 27     private String image_path = "http://www.deskcar.com/desktop/fengjing/200895150214/21.jpg";
+ 28     private final int IS_FINSIH = 1;
+ 29     private ProgressDialog dialog = null;
+ 30 
+ 31     // 标准的写法
+ 32     private Handler handler = new Handler() {
+ 33         // 使用handleMessage去处理消息！！，里面的参数Message msg既是发送过来的参数~
+ 34         @Override
+ 35         public void handleMessage(android.os.Message msg) {
+ 36             //
+ 37             // 在此接受发送过来的消息&lt;---msg
+ 38             byte[] data = (byte[]) msg.obj;  //转型
+ 39             // 将接受过来的数据赋值给imageview
+ 40             imageView.setImageBitmap(BitmapFactory.decodeByteArray(data, 0,
+ 41                     data.length));
+ 42             // 标记~数据发送已经结束了？，此处有由代码的逻辑顺序来决定的，
+ 43             if (msg.what == IS_FINSIH) {
+ 44                 dialog.dismiss();
+ 45             }
+ 46         };
+ 47     };
+ 48 
+ 49     @Override
+ 50     protected void onCreate(Bundle savedInstanceState) {
+ 51         super.onCreate(savedInstanceState);
+ 52         setContentView(R.layout.activity_main);
+ 53         imageView = (ImageView) findViewById(R.id.imageView1);
+ 54         dialog = new ProgressDialog(this);
+ 55         dialog.setTitle("提示");
+ 56         dialog.setMessage("正在下载,请稍等...");
+ 57         dialog.setCancelable(false);
+ 58 
+ 59         button = (Button) findViewById(R.id.button1);
+ 60         button.setOnClickListener(new View.OnClickListener() {
+ 61             @Override
+ 62             public void onClick(View v) {
+ 63                 // TODO Auto-generated method stub
+ 64                 // 开启线程
+ 65                 new Thread(new MyThread()).start();
+ 66                 dialog.show(); // 显示对话框他会直接先显示出来这个是位于主线程里面的。与thread互不影响。
+ 67 
+ 68             }
+ 69         });
+ 70     }
+ 71 
+ 72     // 避免在UI主线程里面更新数据
+ 73     public class MyThread implements Runnable {
+ 74         @Override
+ 75         public void run() {
+ 76             // TODO Auto-generated method stub
+ 77             // 使用http完成网络下载的操作
+ 78             HttpClient httpClient = new DefaultHttpClient();
+ 79             HttpGet httpGet = new HttpGet(image_path);
+ 80             HttpResponse httpResponse = null;
+ 81             //下面是我在http的使用过程中总结的一些心得，对于http没有经验，有错请指出。。。
+ 82             /*
+ 83              * 这种方式获取响应内容的实体~entity中的流对象！不建议使用了。比较麻烦， InputStream inputStream
+ 84              * =null; inputStream = httpResponse.getEntity().getContent();
+ 85              * 然后将该inputStream写入到ByteArrayOutputStream，然后该内存缓冲流可以转为字节数组byte[]=
+ 86              * outputStream.toByteArray();
+ 87              */
+ 88             // 使用http新的就是通过httpclient执行要执行的get/或者post方法然后获取服务端响应过来的实体对象entity；
+ 89             // 然后从该entity中获取需要的数据比如inputstream/文件的长度等。。。一般我们的最终目的都是获取一个字节数组！byte[]只有二进制的数据才是数据的终极形态！
+ 90             // 在使用的时候为了方便操作有一个工具类可以帮助我们简单的获取二进制数组
+ 91             try {
+ 92                 httpResponse = httpClient.execute(httpGet);// client执行请求~典型的面对对象：客户端对象取执行请求的方法，获得返回的内容对象。通过工具来解析内容
+ 93                 // 判断连接是否正常
+ 94                 if (httpResponse.getStatusLine().getStatusCode() == 200) {
+ 95 
+ 96                     HttpEntity entity = httpResponse.getEntity();  //获取响应头的实体内容
+ 97                     // 使用EntityUtils
+ 98                     byte[] data = EntityUtils.toByteArray(entity);
+ 99                     // 到了这里就是需要把我们的数据发送给UI主线程，二进制数组是最好的发送对象！！！
+100                     // Message message = new Message() 该方法是创建而不是在的当前的线程池取出。
+101                     Message message = Message.obtain();
+102                     message.obj = data;
+103                     message.what = IS_FINSIH; // 结束标志位
+104                     handler.sendMessage(message); // 将数据发送过去~
+105                 }
+106 
+107             } catch (IOException e) {
+108                 // TODO Auto-generated catch block
+109                 e.printStackTrace();
+110             }
+111         }
+112     }
+113 }
+
+&nbsp;---------------如有侵犯，请告知。
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

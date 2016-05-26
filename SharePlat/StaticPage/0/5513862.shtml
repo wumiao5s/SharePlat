@@ -1,0 +1,307 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>树莓派如何便捷的使用pi4j</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513862" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">树莓派如何便捷的使用pi4j</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			问题的由来
+pi4j用起来很方便，但是感觉pi4j库的命名太杂乱，啰嗦了，很容易弄混，而且好像没听说官方有自己的编译器。如果没有智能点的编辑器的话，写起来真要命，但是树莓派运行Eclipse不太现实，于是我想到了在Windows下编写代码，再将项目文件传输到树莓派，在树莓派上编译，运行。
+使用Eclips会很方便：一些快捷键用起来写代码刷刷的，最常用的就是
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;alt+ &nbsp; / &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 智能提示，补全
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ctrl+shift + o &nbsp; &nbsp;自动管理 import
+&nbsp;
+我们的操作流程就是：在windows下用Eclipse编写代码，使用WinScp复制代码文件到树莓派，编译运行。
+&nbsp;
+&nbsp;
+WinScp
+我们先安装WinScp，它是什么作用呢？WinScp提供了图形化的操作界面，通过拖拽文件。达到linux和windows双向发送文件的功能，很方便。
+具体下载安装就不必说了哇~！
+&nbsp;
+&nbsp;
+在Windows下使用Eclipse编写pi4j项目
+首先你要有台安装了Eclipse 的电脑，要在Windows下使用pi4j，就必须在Eclipse的项目中导入pi4j库的jar文件。具体操作如下
+一、使用WinScp连接树莓派
+打开WinScp，输入你的树莓派的IP（可通过路由器查看），账户和密码，即可连接。如果连接不上多尝试几遍，老连不上，请确保树莓派配置中允许了SSH
+&nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+&nbsp;
+&nbsp;
+将树莓派的/opt/pi4j/lib下的所有的jar文件拖拽到Windows 的某个文件夹下。我放在java的工作文件夹workspace下的pi4j_jars文件夹下。
+&nbsp;
+&nbsp;
+&nbsp;
+
+&nbsp;
+新建一个Eclipse的java项目，我命名为pi4jDemo。
+右击工程名pi4jDemo.选择最后一项：Properties &nbsp;-&gt;java build path &nbsp;-&gt; Libraries &nbsp;-&gt;Add External jas&nbsp;
+&nbsp;
+然后进入我们刚刚新建 的 pi4j_jars文件夹下，全选里面的jar文件，OK
+这样就完成了pi4j的jar的关联。
+&nbsp;
+下面开始写代码啰~~~
+&nbsp;
+提示：经常写java的都会习惯性的建包，再新建一个类。不要建包名，使用默认(default)包就好了，因为代码是在Windows下编写的，树莓派那边不会形成包目录，而且一般pi4j项目单个文件就可以搞定了。
+效果图：
+
+&nbsp;
+&nbsp;
+小灯闪烁的例子代码
+&nbsp;
+
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.RaspiPin;
+
+public class LEDBlink
+{
+    //获取全局Gpio 引脚控制器对象
+    public static final GpioController gpio = GpioFactory.getInstance();
+    
+    public static void main(String [] rags) throws InterruptedException
+    {
+        
+        //定义编号为0的引脚为数字输出引脚，初始化为低电平
+        GpioPinDigitalOutput myLed = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "" ,PinState.LOW);
+        
+        while(true)
+        {
+            
+            myLed.high();
+            Thread.sleep(500);
+            myLed.low();
+            Thread.sleep(500);
+            
+        }
+    
+    }
+    
+}
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+将代码源文件复制到树莓派下，编译运行
+&nbsp;
+
+&nbsp;
+&nbsp;
+回到树莓派，编译运行
+编译: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;javac -classpath .:classes:/opt/pi4j/lib/'*' &nbsp;LEDBlink.java
+运行&nbsp;： &nbsp;sudo java -classpath .:classes:/opt/pi4j/lib/'*' &nbsp;LEDBlink
+&nbsp;
+&nbsp;
+大功告成！
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

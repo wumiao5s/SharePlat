@@ -1,0 +1,204 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>测试方法---"SFDIPOT"</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="23" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">测试方法---"SFDIPOT"</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    <p>SFDIPOT方法是快速测试的一种方法，可以帮助你快速理清测试点。</p><p><br/></p><p>我粗略地想了一下，凡是面试时我遇到过的奇葩的让我测一个电梯、雨伞、电话、水杯、测一个奇怪的东西的面试题上都能用。</p><p><br/></p><p>然后嘛，日常工作中也可以拿来做测试分析，应该还是很实用的。</p><p><br/></p><p>当你的老板突然叫你测一下一个什么什么东西的时候，这个方法也有用呢。</p><p><br/></p><p>&nbsp;</p><p><br/></p><p>由于本人对测试电梯的面试题比较有缘，所以这里以此为例：</p><p><br/></p><p>S-Structure</p><p><br/></p><p>结构或者说组成，从软件的构成入手，比如代码单元、功能模块。</p><p><br/></p><p>比如你要测试一个电梯，那么就是测试电梯的门、里面的屏幕、外面的屏幕、按钮等等。</p><p><br/></p><p>F-Function</p><p><br/></p><p>功能，这是大家最了解的，测试功能嘛。</p><p><br/></p><p>和上面结构的区别，这是去用待测软件做一个基本的操作，而上面是去测组件本身。</p><p><br/></p><p>还是举电梯的例子，按一个楼层按钮、开门、关门、按下警铃按钮等。</p><p><br/></p><p>D-Data</p><p><br/></p><p>数据，</p><p><br/></p><p>测试输入和输出，</p><p><br/></p><p>测试当软件处理的输入数据不同时的输出情况。</p><p><br/></p><p>电梯的话，比如进来一个人，进来一个人和一个箱子，进来两个人。这个确实看上去很奇怪。</p><p><br/></p><p>如果题目是测电话机，那么输入不同的电话号码就很好理解了。</p><p><br/></p><p>如果题目是测百度首页，那这一块就很容易想了。输入不同类型的关键字。</p><p><br/></p><p>I-Interface</p><p><br/></p><p>测接口。</p><p><br/></p><p>接口包括用户接口、程序接口、其他接口比如硬件接口等。</p><p><br/></p><p>如果测电梯，那么用户接口就是那些按钮啊、屏幕啊。程序接口就比如说是电梯内部控制程序和物理组件之间的接口。</p><p><br/></p><p>如果题目是百度首页，就是网页界面和内部程序接口</p><p><br/></p><p>P-Platform</p><p><br/></p><p>平台，运行环境。</p><p><br/></p><p>以电梯举例的话，电梯井、大楼、地基、感觉怪怪的。。</p><p><br/></p><p>如果是要你测百度首页，那么，windows电脑上，mac上，ie上，firefox上，其他各种浏览器上，手机上，平板上，等等。</p><p><br/></p><p>O-Operation</p><p><br/></p><p>操作，也就是怎么用这个待测软件。</p><p><br/></p><p>和前面测功能的区别是主要集中于测真实的用户场景和测复杂的用户流程，也就是怎么用这个软件的。</p><p><br/></p><p>以电梯举例，从1楼进来几个人，分别去往不同楼层，先到了3楼，下了一个人，上了2个人，又去到5楼。。。。。（略）</p><p><br/></p><p>T-Time</p><p><br/></p><p>时间</p><p><br/></p><p>主要是和时间相关的一些测试，也不全是性能测试</p><p><br/></p><p>比如网速啊、反复一段时间一直做一些操作啊、缓存机制啊、超时机制啊、隔一段时间做一些操作啊之类的。</p><p><br/></p><p>&lt;p style=&quot;margin: 10px auto</p><p><br/></p>
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

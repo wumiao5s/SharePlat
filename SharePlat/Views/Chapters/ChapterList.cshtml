@@ -1,0 +1,99 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "文章列表";
+    var chapterList = ViewBag.ChapterList as List<SharePlat.Model.Chapter>;
+    var userName = ViewBag.UserName;
+}
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+    @*<script src="/bundles/blog-common.js?v=ceHMEpeJXcR_f7TCJnXeZQRG1UsC0_cpwDJRs_oVInY1" type="text/javascript"></script>*@
+</head>
+<body>
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+
+    <div id="main">
+        
+        <div id="search_block">
+        @using (Html.BeginForm("SearchPage", "Chapters", FormMethod.Post))
+        {
+            <div class="side_search">
+                <input type="hidden" name="searchType" value="c" />
+                <input type="text" name="keywords" class="search_input" tabindex="3">
+                <input onclick="zzk_go()" type="submit" class="search_btn" value="找文章">
+            </div>
+        }
+        @using (Html.BeginForm("SearchPage", "Chapters", FormMethod.Post))
+        {
+            <div id="google_search" class="side_search">
+                <input type="hidden" name="searchType" value="b" />
+                <input type="text" name="keywords" id="zzs_search_q" class="search_input">
+                <input type="submit" class="search_btn" value="找知识">
+            </div>
+        }
+        </div>
+
+        <div id="post_detail">
+            <div class="post">
+                @{
+                    foreach (var chapter in chapterList)
+                    {
+                        string showContent = chapter.Content;
+                        if (showContent.Length > 100)
+                        {
+                            showContent = showContent.Substring(0, 100);
+                        }
+                    <h2>
+                        <a id="ctl01_TitleUrl">@chapter.Title</a>
+                    </h2>
+                    <div id="cnblogs_post_body">@Html.Raw(showContent)...</div>
+                    <p class="postfoot">
+                        posted @@ @chapter.PostDate
+                        @if (ViewBag.SearchType == "b")   //blogs
+                        {
+                            <a href="@chapter.BlogUrl" target="_blank">阅读全文</a>
+                        }
+                        else
+                        {
+                            <a href="/StaticPage/@(chapter.UserId)/@(chapter.Id).shtml" target="_blank">阅读全文</a>
+                        }
+                    </p>
+                    }
+                }
+            </div>
+        </div>
+        <div id="homepage1_HomePageDays_homepage_bottom_pager" class="topicListFooter">
+            <div class="pager">
+                @if (ViewBag.IsSearch != null && ViewBag.IsSearch)
+                {
+                    @Html.Raw(SharePlat.Common.CommonHelper.Pager("/Chapters/SearchPage?pagenum={pagenum}&keywords=" + ViewBag.Keywords + "&searchType=" + ViewBag.SearchType,
+                ViewBag.TotalSize, ViewBag.PageSize, ViewBag.CurrentPage))
+                }
+                else
+                {
+                    @Html.Raw(SharePlat.Common.CommonHelper.Pager("/Chapters/ChapterList?pagenum={pagenum}",
+                ViewBag.TotalSize, ViewBag.PageSize, ViewBag.CurrentPage))
+                }
+
+            </div>
+        </div>
+
+        <p id="footer">
+            Powered by: 
+            <a id="Footer1_Hyperlink3" name="Hyperlink1" href="#" style="font-family: Verdana; font-size: 12px;">SharePlat</a>
+        </p>
+    </div>
+
+
+</body>
+</html>

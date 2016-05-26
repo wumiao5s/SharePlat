@@ -1,0 +1,263 @@
+﻿@using BotDetect.Web.Mvc;
+@{
+    ViewBag.Title = "欢迎加入SharePlat";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MvcCaptcha mvcCaptcha = SharePlat.Web.WebHelper.GetCaptcha("registerCaptcha", "CaptchaCodeTextBox");
+}
+
+<div id="wrap">
+    <div id="header">
+        <div class="mainmenu">
+            <ul id="navlist_main">
+                <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                <li id="ctl00_header1_liLogin"><a href="/UserOperation/Login">登 录</a></li>
+                <li><a id="ctl00_header1_hlRegister" class="current" href="/register.aspx">注册</a></li>
+                <li><a id="ctl00_header1_hlResetPassword" href="/UserOperation/RequireResetPassword">重置密码</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="sideleft">
+
+        <div class="main_register">
+            <table class="post_context">
+                <tr>
+                    <td class="td_name">邮　　　箱：
+                    </td>
+                    <td>
+                        <input name="ctl00$holderLeft$txt_email" type="text" id="ctl00_holderLeft_txt_email" class="input_default" onblur="EmailExist()" />
+                    </td>
+                    <td>
+                        <div id="tip_email"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="height: 10px; line-height: 10px;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="td_name">用户名：
+                    </td>
+                    <td>
+                        <input name="ctl00$holderLeft$txt_userName" type="text" id="ctl00_holderLeft_txt_userName" class="input_default" onblur="UserNameExist()" />&nbsp;
+                    </td>
+                    <td>
+                        <div id="tip_userName"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="height: 10px; line-height: 10px;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="td_name">密　　　码：
+                    </td>
+                    <td>
+                        <input name="ctl00$holderLeft$txt_pwd" type="password" id="ctl00_holderLeft_txt_pwd" class="input_default" />
+                    </td>
+                    <td>
+                        <div id="tip_pwd"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td_name">确 认 密 码：
+                    </td>
+                    <td>
+                        <input name="ctl00$holderLeft$txt_confirm_pwd" type="password" id="ctl00_holderLeft_txt_confirm_pwd" class="input_default" onblur="confirmpwd()" />
+                    </td>
+                    <td>
+                        <div id="tip_confirm_pwd"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2" class="line_tip">至少8位，必须包含字母、数字、特殊字符</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="height: 10px; line-height: 10px;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>@Html.Captcha(mvcCaptcha)</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="height: 10px; line-height: 10px;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="td_name">验　证　码：
+                    </td>
+                    <td>
+                        <input name="ctl00$holderLeft$CaptchaCodeTextBox" type="text" id="CaptchaCodeTextBox" class="input_default" />
+                    </td>
+                    <td>
+                        <div id="tip_authen_code"></div>
+                    </td>
+                </tr>
+                <tr style="display: none;">
+                    <td></td>
+                    <td colspan="2" style="height: 35px; vertical-align: middle;"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="button" name="ctl00$holderLeft$btn_submit" value="注     册" id="ctl00_holderLeft_btn_submit" class="btn_submit" style="width: 150px;" />
+                    </td>
+                </tr>
+            </table>
+            <div style="display: none">
+                <input name="ctl00$holderLeft$txt_code_hidden" type="text" id="ctl00_holderLeft_txt_code_hidden" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section style{
+    <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .validation-ready {
+            background: none;
+            padding-left: 0px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#ctl00_holderLeft_btn_submit").click(function () {
+                var email = $("#ctl00_holderLeft_txt_email").val();
+                var userName = $("#ctl00_holderLeft_txt_userName").val();
+                var passwordOne = $("#ctl00_holderLeft_txt_pwd").val();
+                var passwordTwo = $("#ctl00_holderLeft_txt_confirm_pwd").val();
+                var captchaCode = $("#CaptchaCodeTextBox").val();
+                //数据验证
+                if (email.length <= 0) {
+                    alert("邮箱地址不能为空.");
+                    return;
+                }
+                if (passwordOne.length <= 0) {
+                    alert("密码不能为空.");
+                    return;
+                }
+                if (passwordOne != passwordTwo) {
+                    alert("两次输入密码不一致.");
+                    return;
+                }
+                if (captchaCode.length <= 0) {
+                    alert("验证码不能为空");
+                    return;
+                }
+
+                var captchaObj = $("#CaptchaCodeTextBox").get(0).Captcha;
+                var params = {}
+                params.CaptchaId = captchaObj.Id;
+                params.InstanceId = captchaObj.InstanceId;
+                params.UserInput = captchaCode;
+                params.UserName = userName;
+                params.Email = email;
+                params.passwordOne = passwordOne;
+
+                $.getJSON('/UserOperation/SubRegister', params, function (data) {
+                    if (data.Status == "ok") {
+                        alert("注册成功,请登录注册邮箱激活用户");
+                    }
+                    else {
+                        alert(data.Msg);
+                        captchaObj.ReloadImage();
+                    }
+                });
+                event.preventDefault();
+            });
+        });
+    </script>
+}
+
+@section script{
+    <script src="/Scripts/framework.js"></script>
+    <script src="/Scripts/val.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            //邮箱验证  1032131483@qq.com.cn
+            $('#ctl00_holderLeft_txt_email').blur(function () {
+                regex = /[0-9a-zA-Z_-]+@@[0-9a-zA-Z_-]+[.]([a-zA-Z]+){1,2}/;
+                if (!regex.test($(this).val())) {
+                    $("#tip_email").text("邮箱地址格式有误!");
+                }
+                else {
+                    $("#tip_email").text("");
+                }
+            });
+        });
+        function confirmpwd() {
+            p1 = $('#ctl00_holderLeft_txt_pwd').val();
+            p2 = $('#ctl00_holderLeft_txt_confirm_pwd').val();
+            if (p1 != p2) {
+                setTimeout(function () {
+                    $('#ctl00_holderLeft_txt_confirm_pwd').val('');
+                    $('#tip_confirm_pwd').removeClass('validation-valid');
+                    $('#tip_confirm_pwd').addClass('validation-error');
+                    $('#tip_confirm_pwd').html('密码与确认密码输入不一致，请重新输入');
+                }, 10)
+            }
+        }
+
+        function UserNameExist() {
+            var loginName = $('#ctl00_holderLeft_txt_userName').val();
+            if (loginName == "" || loginName.length < 2) {
+                return;
+            }
+            $('#tip_userName').append("正在检查用户名是否存在....");
+            $.ajax({
+                url: '/UserOperation/CheckUserNameAvaliable',
+                data: { UserName: loginName },
+                type: 'post',
+                cache: false,
+                success: function (data) {
+                    if (data.d) {
+                        setTimeout(function () {
+                            //$('#ctl00_holderLeft_txt_userName').val('');
+                            $('#tip_userName').removeClass('validation-valid');
+                            $('#tip_userName').addClass('validation-error');
+                            $('#tip_userName').html('<strong>"' + loginName + '</strong>"已存在，请使用其它用户名');
+                        }, 10);
+                    }
+                    else {
+                        $('#tip_userName').html("用户名输入成功");
+                    }
+
+                },
+                error: function (xhr) {
+                    $('#tip_userName').html(xhr.responseText);
+                }
+            });
+        }
+
+        function EmailExist() {
+            email = $('#ctl00_holderLeft_txt_email').val();
+            if (email == "") {
+                $('#tip_email').removeClass('validation-valid');
+                $('#tip_email').html();
+                return;
+            }
+            $('#tip_email').addClass("validation-valid");
+            $('#tip_email').append("正在检查邮箱是否存在....");
+            $.ajax({
+                url: '/UserOperation/CheckEmailAvaliable',
+                data: { Email: email },
+                type: 'post',
+                dataType: 'json',
+                cache: false,
+                success: function (data) {
+                    if (data.d) {
+                        setTimeout(function () {
+                            //$('#ctl00_holderLeft_txt_email').val('');
+                            $('#tip_email').removeClass('validation-valid');
+                            $('#tip_email').addClass('validation-error');
+                            $('#tip_email').html('<strong>"' + email + '</strong>"已存在，请使用其它邮箱');
+                        }, 10);
+                    }
+                },
+                error: function (xhr) {
+                    $('#tip_email').html(xhr.responseText);
+                }
+            });
+        }
+
+    </script>
+}

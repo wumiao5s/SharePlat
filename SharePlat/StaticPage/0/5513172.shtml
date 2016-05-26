@@ -1,0 +1,434 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>React系列（一）：React入门</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513172" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">React系列（一）：React入门</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			React简介
+1.由来
+　　React是有Facebook开发出来用于构建前端界面的JS组件库，由于其背后的强大背景，使得这款库在技术开发上完全没有问题。
+2.React的优势
+　　解决大规模项目开发中数据不断变化变得难以操作的问题；
+　　组件化开发，使得开发更加快速；
+　　单向数据流，有利于找到问题；
+　　虚拟DOM，在React内部有一套diff算法可以快速的计算出整体需要改动的位置，从而做到快速局部刷新；举个栗子：删除一个列表再插入个新表，计算后会比较出不同然后插进去；
+　　JSX的编译方式，将HTML代码和JS混合到一起来写，组件结构清晰，数据结构清晰，之后可以通过工具转成JS。
+3.开发方式
+　　使用React开发可以像平常开发一样， 最后讲JSX转换一下即可，在0.14，React拆分开，所以我们需要引入三个文件
+
+&lt;script src="../js/react.js"&gt;&lt;/script&gt;
+&lt;script src="../js/react-dom.js"&gt;&lt;/script&gt;
+&lt;script src="../js/JSXTransformer.js"&gt;&lt;/script&gt;
+
+　　第一个不解释，第二个文件作用是将React结构转换成HTML后插入到指定的DOM节点，第三个为转换文件，将JSX格式转换成JS格式的文件。当然正常情况下还需要引入我们写的组件（如果你没直接把组件写在HTML里的话= =#）
+　　另外一种开发方式就是基于node环境开发，配合webpack，gulp打造一套自动化构建工具，同时在Node里开发我们还可以配合babel使用ES6语法来编写，这里不细说。
+&nbsp;
+基本语法
+1.Hello World
+　　一切语言的学习开始都是我们熟知的这个短语~在将React转换为HTML结构的时候需要用到ReactDOM.render
+
+ReactDOM.render(
+        &lt;h1&gt;Hello, world!&lt;/h1&gt;,
+        document.getElementById('div1')
+);
+
+　　插入之前引入的JS和这个JSX文件就可以打开浏览器看一下了~
+　　可以看到ReactDOM.render中第一个参数为传入的组件，第二个参数为加入到某个标签里，注意，一般情况下最好不要直接添加到document.body中。
+2.组件的编写
+　　但这显然离我们说的组件化还有十万八千里，举个简单的例子，一个简单的上中下结构的网页我们可以给它拆成三部分（当然也可以更多，这里说最简单的），那么我们就需要编写3个组件，其中头部和底部都是可以在整站的很多位置复用的。那我们开始编写我们的组件：
+　　
+
+var Header = React.createClass({
+    render: function() {
+        return &lt;h1&gt;欢迎来到React学习站&lt;/h1&gt;
+    }
+});
+
+var Main = React.createClass({
+    render: function() {
+        return (&lt;div className="main_box"&gt;
+                    &lt;h2&gt;这是一篇关于学习React的网站&lt;/h2&gt;
+                    &lt;div&gt;我是内容，哈哈哈&hellip;&hellip;&lt;/div&gt;
+                &lt;/div&gt;
+    )}
+});
+
+var Footer = React.createClass({
+    render: function() {
+        return (&lt;div&gt;
+                    &lt;p&gt;联系电话1333333333&lt;/p&gt;
+                    &lt;p&gt;QQ：6843521463&lt;/p&gt;
+                &lt;/div&gt;
+    )}
+});
+
+var Index = React.createClass({
+    render: function() {
+        return (&lt;div&gt;
+                    &lt;Header /&gt;
+                    &lt;Main /&gt;
+                    &lt;Footer /&gt;
+                &lt;/div&gt;
+    )}
+});
+        
+ReactDOM.render(
+        &lt;Index /&gt;,
+        document.getElementById('div1')
+);
+
+&nbsp;
+　　这里首先我们使用React.createClass方法定义了3个组件，再在Index组件里将三个组件包在一起，最后添加到DOMrender中。
+　　其中需要注意的是，在render里的代码结构如果是多层，在最外层必须包裹一层标签，否则会报错。
+　　定义的名字一定需要以大写开头。
+3.props
+　　prop在当前组件里来传递数据，常见的情况是父级传给子级数据，然后子级来调用。
+
+var ListContent = React.createClass({
+    render: function(){
+        return (
+            &lt;div&gt;
+                &lt;div&gt;{this.props.json.one}&lt;/div&gt;
+                &lt;div&gt;{this.props.json.two}&lt;/div&gt;
+            &lt;/div&gt;
+        );
+    }
+});
+
+var All = React.createClass({
+    render: function(){
+        var json = {
+                'one': '这是一个用react写出来的东西',
+                'two': 'hello world',
+        };
+        return (
+            &lt;div&gt;
+                &lt;ListContent json={json} /&gt;
+            &lt;/div&gt;
+        );
+    }
+});
+
+ReactDOM.render(
+    &lt;All /&gt;,document.getElementById('box')
+);
+
+　　这里我们在All中定义了一个数据，然后将它传入ListContent 这个组件里，这个时候ListContent 里就有了json的数据，在里面的内容结构中就可以使用this.props来调用了，需要注意的是，在标签里插入内容需要用{}来包起来。
+4.state
+　　React可以算是一个大的状态机，其中的数据改变几乎都来源于状态的改变，state可以用来设置这个状态，当触发某个动作的时候来改变这个state从而更新页面中相关的数据。一个简单的例子：
+　　
+
+var ListContent = React.createClass({
+    getInitialState: function() {
+        return {
+            click: true
+        };
+    },
+    ShowName: function() {
+        this.setState({
+            click: false
+        });
+        alert('iceblue')
+    },
+    render: function() {return ( 
+            &lt; div &gt;
+                &lt; button disabled={this.state.click} onClick = {this.ShowName} &gt; 显示名字 &lt; /button&gt; 
+            &lt; /div &gt;
+        );
+    }
+});
+
+ReactDOM.render( &lt; ListContent /&gt; , document.getElementById('box'));
+
+　　在初始环境我们用getInitialState（固定名字）来设定初始的state值，当然也可以不设定。这里我们设定了一个状态click，我们的想法是点击之后按钮变得不可点击。这里我们定义了一个ShowName（自定义）函数来做两件事，显示名字和改变状态，注意，最好在改变状态的函数中不添加其它作用代码，这里为了省事。这个时候当我们触发onClick（固定）事件后调用之前定义的函数，通过setState来改变click的值，这时候组件会接收到这种改变并对页面进行改变。
+　　基本通过props和state就可以完成一些简单的组件化开发了。
+5.map
+　　与JQ的map类似，可以遍历子节点然后进行相应的操作，我们可以利用map来减少大量重复的代码，只需要改变其中填充的数据即可。
+
+var number = ['1', '2', '3', '4'];
+ReactDOM.render(
+  &lt;div&gt;
+    {
+        number.map(function(name,key){
+            return &lt;div key={key}&gt;这次年终有{name}个月&lt;/div&gt;
+        })
+    }
+  &lt;/div&gt;,
+  document.getElementById('box')
+);
+
+6.ref
+　　最开始的时候我们提到了React的最大特点是虚拟DOM，那么也就是说我们所创建的组件其实并不是真实的节点，只有当插入完成后才会变成真实的DOM。当状态改变后，再将算完的结构展现到页面上。如果我们需要获取真实的DOM节点就需要用到ref属性。
+
+var MyComponent = React.createClass({
+        handleClick: function() {
+         console.log(this.refs.myTextInput);
+        },
+        render: function() {
+           return (
+                   &lt;div&gt;
+                       &lt;input type="text" ref="myTextInput" value="随便写点" /&gt;
+                       &lt;input type="button" value="print" onClick={this.handleClick} /&gt;
+                   &lt;/div&gt;
+           )}
+});
+
+ReactDOM.render(&lt;MyComponent/&gt;,document.getElementById('box'));//&lt;input type="text" value="随便写点" data-reactid=".0.0" /&gt;
+
+　　这里首先在第一个input中定义ref，之后就能获取到真实节点并进行相应的操作了，其中data-reactid不用管，类似于DOM分层标识，可以让React清楚的知道DOM结构并作出快速的计算。
+7.生命周期
+　　所谓生命周期就是在代码运行的不同阶段我们可以进行不同操作，其中大体有这么几种（固定名字）：
+　　getInitialState:&nbsp;在组件挂载之前调用一次。返回值将会作为&nbsp;this.state&nbsp;的初始值。
+　　componentWillMount: 服务器端和客户端都只调用一次，在初始化渲染执行之前立刻调用。如果在这个方法内调用setState，render()&nbsp;将会感知到更新后的 state，执行仅一次
+　　componentDidMount: 在初始化渲染执行之后立刻调用一次，仅客户端有效（服务器端不会调用）。在生命周期中的这个时间点，组件拥有一个 DOM 展现，你可以通过&nbsp;this.getDOMNode()&nbsp;来获取相应 DOM 节点。
+还有更多的更新组件方法
+　　componentWillReceiveProps: 在组件接收到新的 props 的时候调用。在初始化渲染的时候，该方法不会调用
+
+　　shouldComponentUpdate: 在接收到新的 props 或者 state，将要渲染之前调用。该方法在初始化渲染的时候不会调用
+
+　　componentWillUpdate: 在 state 改变的时候执行一些操作
+
+8.事件名　
+　　触摸事件：onTouchCancel\onTouchEnd\onTouchMove\onTouchStart
+　　键盘事件：onKeyDown\onKeyPress\onKeyUp
+　　剪切事件：onCopy\onCut\onPaste
+　　表单事件：onChange\onInput\onSubmit
+　　焦点事件：onFocus\onBlur
+　　UI元素：onScroll(移动设备是手指滚动和PC的鼠标滑动)
+　　滚动事件：onWheel(鼠标滚轮)
+　　鼠标类型:onClick\onContextMenu(右键)\onDoubleClick\onMouseDown\onMouseEnter\onMouseLeave\onMouseMove\onMouseOut\onMouseOver\onMouseUponDrag\onDrop\onDragEnd\onDragEnter\onDragExit\onDragLeave\onDragOver\onDragStart
+9.代码书写的注意事项
+　　样式：
+　　　　在React中传递数据前面提到过要用{}包起来，同理在标签内传递
+　　　　class：className={fontColor}或className="class1"
+　　　　style：style={{color:"red"}}或style={newStyle}，其中newStyle为定义的样式集合{corlor:"red",height:.......}
+　　逻辑：
+　　　　如果想在React中插入代码，可以在代码块外面写，比如
+
+ var MyComponent = React.createClass({
+        if(...){do something};
+        render: function() {
+           return (
+                   &lt;div&gt;1&lt;/div&gt;
+           )}
+});
+
+　
+　　今天就写这些，日后可能会出一些关于webpack或者redux结合react的博客，不过博主很懒，不一定啥时候了= =#，最后附上中文API地址：
+　　http://reactjs.cn/react/docs/getting-started.html
+&nbsp;
+&nbsp;
+　　
+　　
+　　
+&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

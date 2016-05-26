@@ -1,0 +1,321 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Java基础学习（一）——语言特性及开发环境搭建</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513722" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">Java基础学习（一）——语言特性及开发环境搭建</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			&nbsp; 学习了一段时间的Java，想通过几篇文章做一下这一段时间的学习总结。由于有c/c++的一些基础，总的来说Java语言还是挺具有亲和感的。虽然经常到博客园找资料，但是也一直没有自己动手写过博客，现在练练手，也为日后有个回忆吧。
+一,Java简介
+1.语言起源
+语言起源：Java是SUN ( Stanford University Network 斯坦福大学网络公司 ) 1995年推出的一门高级编程语言。Java名称的来源Java最初被命名为Oak，目标在于家用电器等小型系统的编程语言，随着市场的变化，SUN着眼于网络应用的开发。Java的名字的来源：Java是印度尼西亚爪哇岛的英文名称，因盛产咖啡而闻名。
+2.语言特性之跨平台
+① 跨平台
+什么是跨平台（计算机系统），跨平台概念是软件开发中一个重要的概念，即不依赖于操作系统，也不信赖硬件环境。一个操作系统下开发的应用，放到另一个操作系统下依然可以运行。&nbsp;
+② Java的跨平台
+&ldquo;write once run anywhere&rdquo;
+Java的跨平台是相对于其他编程语言而言的，通过Java语言编写的应用程序在不同的系统平台上都可以运行。一般的高级语言如果要在不同的平台上运行，至少需要编译成不同的目标代码。在windows编译的c语言程序，在linux下是不能运行的。当然在linux下编译的c语言程序在windows下也是不能运行的。而Java语言在不同平台上运行时不需要重新编译。
+Java跨平台的原理：Java的跨平台是通过Java虚拟机（JVM）来实现的。
+③ Java虚拟机（JVM）
+Java Virtual Machine 一个软件模拟的计算机。Java源程序想象成我们的C源程序，Java源程序编译后生成的字节码（.class）就相当于C源程序编译后的二进制可执行文件。JVM虚拟机相当于计算机系统（操作系统+硬件环境），Java解释器相当于CPU。
+.exe文件直接在windows操作系统下运行，在CPU上运行的是机器码（.exe文件）
+.class字节码文件是运行在JVM虚拟机下的，在Java解释器上运行的是Java字节码。
+Java解释器相当于运行Java字节码的&ldquo;CPU&rdquo;，但该&ldquo;CPU&rdquo;不是通过硬件实现的，而是用软件实现的。Java解释器实际上就是特定的平台下的一 个应用程序。只要实现了特定平台下的解释器程序，Java字节码就能通过解释器程序在该平台下运行，这是Java跨平台的根本。当前，并不是在所有的平台 下都有相应Java解释器程序，这也是Java并不能在所有的平台下都能运行的原因，它只能在已实现了Java解释器程序的平台下运行。
+
+3.Java的三大平台
+JavaSE
+　　 Java SE（Java Platform，Standard Edition）。Java SE 以前称为J2SE。它允许开发和部署在桌面、服务器、嵌入式环境和实时环境中使用的Java 应用程序。Java SE 包含了支持Java Web 服务开发的类，并为Java Platform，Enterprise Edition（Java EE）提供基础。 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 例子：类似QQ这样子的桌面应用。
+Java EE
+　　
+Java EE（Java Platform，Enterprise Edition）。这个版本以前称为J2EE。企业版本帮助开发和部署可移植、健壮、可伸缩且安全的服务器端
+Java 应用程序。Java
+EE 是在Java
+SE 的基础上构建的，它提供Web
+服务、组件模型、管理和通信API，可以用来实现企业级的面向服务体系结构（service-oriented
+architecture，SOA）和Web
+2.0 应用程序。 
+Java ME
+　　 Java ME（Java
+Platform，Micro
+Edition）。这个版本以前称为J2ME，也叫K-JAVA。Java ME 为在移动设备和嵌入式设备（比如手机、PDA、电视机顶盒和打印机）上运行的应用程序提供一个健壮且灵活的环境。Java ME 包括灵活的用户界面、健壮的安全模型、许多内置的网络协议以及对可以动态下载的连网和离线应用程序的丰富支持。基于Java ME 规范的应用程序只需编写一次，就可以用于许多设备，而且可以利用每个设备的本机功能。
+&nbsp;
+关于java的百度百科：http://baike.baidu.com/link?url=MH4zzbgvPsy6LjKaHWcMwOjPhvAY50BF8Oh6cza3i7vWJW7K2HWb5zNEmm8vz6jpdRd_W81px-TmmAZHfDQ7ekkAvIoHc52384Kju0Q6e9m
+二,开发环境的搭建
+1.JDK简介
+JDK（Java Development Kit）是Sun Microsystems针对Java开发员的产品。自从Java推出以来，JDK已经成为使用最广泛的Java SDK。JDK 是整个Java的核心，包括了Java运行环境、Java工具和Java基础类库。从SUN的JDK5.0开始，提供了泛型等非常实用的功能，其版本也不断更新，运行效率得到了非常大的提高。
+2.JDK目录介绍
+
+bin目录：存放Java的编译器、解释器等工具(可执行文件)。
+db目录：JDK7附带的一个轻量级的数据库，名字叫做Derby。
+include目录：存放的调用系统资源的接口文件。
+jre目录：存放Java运行环境文件。
+lib目录：存放Java的类库文件。
+src.zip文件：JDK提供的类的源代码。
+
+安装JDK需要注意的事项：
+
+安装路径中不要包含中文。
+安装路径中不要包含空格。
+
+3.JRE简介
+JRE&nbsp; Java Runtime Environment Java运行环境。包括Java虚拟机(JVM Java Virtual Machine)和Java程序所需的核心类库等，如果想要运行一个开发好的Java程序，计算机中只需要安装JRE即可。
+4.配置path环境变量
+第一步：下载JDK。
+第二步：运行JDK安装程序。
+第三步：设置JDK环境变量。
+通常JDK安装完成后需要设置Java环境变量PATH和CLASSPATH。
+(1).PATH变量
+&nbsp; 是操作系统用于查找可执行文件的目录集，格式如下：
+&nbsp;&nbsp;&nbsp;&nbsp; PATH=&lt;PATH原有的内容&gt;;&lt;JDK安装目录&gt;\bin
+JDK安装完成以后需要将开发工具的存放目录加入到PATH变量中，使得在编译或执行Java程序时操作系统能够找到编译程序javac或解释程序java。
+(2).CLASSPATH变量
+是Java编译器编译用于查找相关类或接口的目录集，也是Java解释器用于查找相关类或接口的目录集，格式如下：
+&nbsp;CLASSPATH=&lt;class文件目录&gt;或&lt;jar文件路径名&gt;[;...]
+这里&lt; jar文件路径名&gt;由每个jar文件及存放它的目录名组成，例如
+&nbsp; &nbsp; D:\Program Files (x86)\Java\jdk1.7.0_07\lib\dt.jar
+多个路径名之间用&ldquo;；&rdquo;分隔。
+在Windows系统下设置环境变量可以从控制面板的系统设置添加，或者&ldquo;计算机&rdquo;-&gt;&ldquo;属性&rdquo;-&gt;"高级系统设置"-&gt;"环境变量"
+这里以JDK1.7为例介绍环境变量的设置过程，假设JDK安装的安装路径是
+D:\Program Files (x86)\Java\jdk1.7.0_07
+5.建立Java开发环境
+Java平台建立(即安装JDK)完成后就可以运行或开发Java程序了。JDK提供了基本的Java开发工具，这些工具放在JDK安装目录下的bin目录。但是，对于复杂大型的Java程序是不能满足要求，需要专门的集成开发工具。下面分别介绍JDK提供主要工具软件，并对常用的集成开发工具做简单介绍。
+(1)JDK开发工具&nbsp;
+JDK开发工具包括工具和实用程序，可帮助开发、执行、调试和保存以 Java 编程语言编写的程序。在这些程序中主要工具程序有：编译工具Javac，解释工具Java，文档生成工具，Java平台调试工具等。
+Javac
+Java编译器，将Java源程序编译成字节码，生成class文件。在bin目录下，文件名称是javac.exe。命令格式：
+&nbsp; &nbsp;javac [选项] 源文件 [类] [ @argfiles ]
+其中，
+选 项 &ndash;- 编译参数。
+源文件 -&ndash; 一个或多个需要编译的java源程序文件。
+类 &ndash;- 一个或多类。
+@argfiles -&ndash; 参数文件。&nbsp;
+使用示例：编译Java源程序helloworld.java。
+&nbsp;
+Java解释器，直接从类文件执行Java应用程序，即application。命令格式：
+java [选项] 类 [参数... ]
+java [选项] -jar jar文件 [参数... ]
+javaw [选项] 类 [参数... ]
+javaw [选项] -jar jar文件 [参数... ]
+其中:
+选项 &nbsp; &nbsp; &nbsp; &nbsp;-&ndash; 运行参数。
+类 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -&ndash; 被调用的类的名称。
+-jar jar文件 -&ndash; 被调用的jar文件名称。
+参数 &nbsp; &nbsp; &nbsp; &nbsp; -&ndash; 传送给main方法的参数串。
+使用示例：执行Java类hello.class
+
+(2)Java集成开发工具&nbsp;
+集成开发环境（简称IDE及Integrated Development Environment的缩写）是用于提供程序开发环境的应用程序，一般包括代码编辑器、编译器、调试器和图形用户界面工具。就是集成了代码编写功能、分析功能、编译功能、调试功能等一体化的开发软件服务套。所有具备这一特性的软件或者软件套（组）都可以叫做集成开发环境,可以独立运行，也可以和其它程序并用。JAVA的集成开发环境很多，比如 JCreator,NeBeans,Java Studio,JBuilder,Java Workshop,JDeveloper,Visual Age for java,Eclipse等等。简介Eclipse为例.
+Eclipse
+Eclipse是著名的跨平台的自由集成开发环境（IDE）。最初主要用来Java语言开发，但是目前亦有人通过插件使其作为C++、Python、PHP等其他语言的开发工具。Eclipse的本身只是一个框架平台，众多插件的支持使得Eclipse拥有其他功能相对固定的IDE软件很难具有的灵活性。许多软件开发商以Eclipse为框架开发自己的IDE。
+Eclipse的运行需要有Java的虚拟机存在，在编译java的时候不需要额外的编译器。自身就能对java源代码进行编译。由于Eclipse是使用java编写的,所以在跨平台上做的很好，常用的平台Eclipse都能运行。
+Eclipse最大的特点使用插件满足使用者根据自己的需要对其进行扩展，且Eclipse源代码进行开放，使插件的数量不断增长，其中不乏一些非常优秀的插件。也使得Eclipse的功能大大增强，使用Eclipse作为基础来开发的软件也很多。
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

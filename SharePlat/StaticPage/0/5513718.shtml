@@ -1,0 +1,293 @@
+﻿<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Mac下如何配置OSChina SSH公钥及配置SourceTree</title>
+    <link type="text/css" rel="stylesheet" href="/css/blog-common.css?v=8F6jO9aWZhOryqKsIFGUkSbXpyPVKDwgWwvpie3eJis1" />
+    <link id="MainCss" type="text/css" rel="stylesheet" href="/css/bundle-BOOK.css?v=DaIdaa-2GlCJY57BeysMEAHbKkfdzZNJbosbSdqmsv41" />
+    <link href="/css/180542.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script type="text/javascript">var currentBlogApp = 'miaosha5s', cb_enable_mathjax = false;</script>
+</head>
+<body>
+    <input type="hidden" name="chapterId" id="chapterId" value="5513718" />
+    <a name="top"></a>
+    <div id="header">
+        <div id="HeaderTitle">
+            <div id="subTitle"></div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="post_detail">
+            <div class="post">
+                <h2>
+                    <a id="ctl01_TitleUrl">Mac下如何配置OSChina SSH公钥及配置SourceTree</a>
+                </h2>
+                <div id="cnblogs_post_body">
+                    
+			利用OSChina提供的免费git空间，可以避免自己配置git服务器的麻烦，同时还能解决SVN不能本地提交的问题
+1.在终端下生成SSHKey，有时输入第1遍没有反应，需要运行2遍
+ssh-keygen -t rsa -C &ldquo;你的邮箱"
+出现提示：
+Generating public/private rsa key pair.
+Enter file in which to save the key (/Users/你的Mac用户名/.ssh/id_rsa):&nbsp;
+&nbsp;
+2.直接回车，保存密钥对保存到默认位置/Users/你的Mac用户名/.ssh/id_rsa
+出现提示：
+Created directory '/Users/你的Mac用户名/.ssh'.
+Enter passphrase (empty for no passphrase):&nbsp;
+&nbsp;
+3.输入密码密钥对的密码，一般不设置，直接回车，再次回车
+出现类似于这样的提示：
+Your identification has been saved in /Users/你的Mac用户名/.ssh/id_rsa.
+Your public key has been saved in /Users/你的Mac用户名/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:+4xdhIVKajdjbF0ZbAKqMxL+Mp372xa86PhVyVqFQVpY &ldquo;你的邮箱
+ssh-keygen -t rsa -C &ldquo;你的邮箱
+The key's randomart image is:
++---[RSA 2048]----+
+| ..=+=+. &nbsp; &nbsp; &nbsp; &nbsp; |
+|. +.+Fo .&nbsp; &nbsp; &nbsp; &nbsp; |
+| o.o.* o &nbsp; &nbsp; &nbsp; &nbsp; |
+|+oo++ = .&nbsp; &nbsp; &nbsp; &nbsp; |
+|o.==.o os. &nbsp; &nbsp; &nbsp; |
+|&nbsp; *+o . .. &nbsp; &nbsp; &nbsp; |
+| ooo.. ..&nbsp; &nbsp; &nbsp; &nbsp; |
+|.= &nbsp; ..&nbsp; + &nbsp; &nbsp; &nbsp; |
+|*o=..&nbsp; .. o&nbsp; &nbsp; &nbsp; |
++----[SHA256]-----+
+&nbsp;
+4.查看公钥
+cat ~/.ssh/id_rsa.pub
+&nbsp;出现提示：
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCoibHh9t2Vzdfgtjn+GKK4pjpCsuU/qT+G7L2utYvkyHpXwX17WSnmY5GEHiRCM64mGaEklE44K0SQhyVckvhrPA2/bdhgT7RKSkP1aL+rK3nAM2X73argQVR+KKLWtbbk/x7pjDhRq+jr0LIXlzsF38Nt4E1XikgL+/ubU8fGuiJEJacM9Rw9EXjhUw2lchSQ9MmqJRdhXD+e9iKoNmIJyUg1kSt60KTFd5G60kAOjHrQ6zidNmkIhmvamy9eBL4JvBszmjhdDTE3pRgAkgUn5+I41KwDG0AX2DCmAjJMplDJqmmGmleGI6Xd6qI+b6AnPAKwqOTOg29xm2T0XpZp &ldquo;你的邮箱
+&nbsp;
+//下面这句不用拷贝
+ssh-keygen -t rsa -C &ldquo;你的邮箱
+&nbsp;
+5.拷贝公钥，添加到码云(https://git.oschina.net)中&nbsp;
+6.连接到码云
+ssh -T git@git.oschina.net
+&nbsp;
+出现提示：
+The authenticity of host 'git.oschina.net (103.21.119.119)' can't be established.
+ECDSA key fingerprint is SHA256:FMNC9Kn/eye1W8i89BgrQp+KkGyhjgbVr17bmjey0Wc.
+Are you sure you want to continue connecting (yes/no)?&nbsp;
+&nbsp;
+7.输入yes
+出现提示：
+Warning: Permanently added 'git.oschina.net,103.21.119.119' (ECDSA) to the list of known hosts.
+Welcome to Git@OSC, xxx!
+到这里说明SSH公钥已经完成，以后Git管理项目不用输入密码了&nbsp;
+8.在git.oschina.net上创建私有或是公开项目
+9.选择SSH，复制项目地址，准备用SourceTree管理项目
+git@git.oschina.net:xxx/xxx.git
+&nbsp;
+10.创建本地git项目存放的目录ABC
+&nbsp;
+11.切换工作目录为ABC
+cd xxx/ABC&nbsp;
+12.克隆项目到工作目录
+git clone git@git.oschina.net:xxx/xxx.git
+&nbsp;
+出现提示：
+Cloning into 'weibo'...
+remote: Counting objects: 3, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (3/3), done.
+Checking connectivity... done.
+&nbsp;这里表示完成克隆，在ABC目录中会出现工程目录EFG
+13.GitHub上下载忽略文件https://github.com/github/gitignore，找到指定类型的忽略文件放到工程目录下，将前面的文件名去掉，去掉之后为隐藏文件（如果在OSChina上选择了忽略文件会冲突，也可以其使用OSChina上的忽略文件）
+&nbsp;
+14.拖动克隆下来的项目文件夹（不是本地工作目录ABC，而是工程目录EFG，否则看不到需要提交文件）到sourceTree中，提交忽略文件到服务器&nbsp;
+15.创建项目到EFG目录，Commit-&gt;Push项目到OSChina
+
+
+
+
+
+
+
+
+
+
+
+		
+                    <div id="blog_post_info_block">
+                        <div id="EntryTag"></div>
+                        <div id="blog_post_info">
+                            <div id="author_profile">
+                                <div id="author_profile_info" class="author_profile_info">
+                                    <div class="clear"></div>
+                                    <div id="author_profile_honor"></div>
+                                </div>
+                                <div class="postDesc" style="text-align: left">阅读(<span id="post_view_count"></span>)</div>
+                                <div id="div_digg">
+                                    <div class="diggit">
+                                        <span class="diggnum" id="digg_count">0</span>
+                                    </div>
+                                    <div class="buryit">
+                                        <span class="burynum" id="bury_count">0</span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="diggword" id="digg_tips">
+                                        (请您对文章做出评价)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+
+        <div id="comment_form_container">
+        </div>
+    </div>
+
+
+    <!--页面脚本-->
+    <script type="text/javascript">
+        function login() {
+            window.location.href = "/UserOperation/Login?returnUrl=" + window.location.pathname;
+        }
+
+        $(function () {
+            var ZanCaiFunc = function (chapterId, action) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/ZanCaiClick",
+                    data: { chapterId: chapterId, action: action },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var obj;
+                            if (action == "zan") {
+                                obj = $("#digg_count");
+                            }
+                            else if (action == "cai") {
+                                obj = $("#bury_count");
+                            }
+
+                            var count = parseInt($(obj).text()) + 1;
+                            $(obj).text(count);
+                            $("#digg_tips").text("提交成功");
+                        }
+                        else {
+                            $("#digg_tips").html(data.Msg);
+                        }
+                        $("#digg_tips").attr("style", "color:red")
+                    },
+                    error: function () {
+                        alert("通讯错误");
+                    }
+                });
+            };
+
+            //"赞"点击
+            $(".diggit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "zan");
+            });
+
+            //"踩"点击
+            $(".buryit").click(function () {
+                var chapterId = $("#chapterId").val();
+                ZanCaiFunc(chapterId, "cai");
+            });
+
+            //异步获取文章踩,赞数
+            var chapterId = $("#chapterId").val();
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetCaiZanCount?chapterId=" + chapterId,
+                success: function (data) {
+                    $("#digg_count").text(data.ZanCount);
+                    $("#bury_count").text(data.CaiCount);
+                }
+            });
+
+            //获取阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetViewCount?id=" + chapterId,
+                success: function (data) {
+                    $("#post_view_count").text(data);
+                }
+            });
+
+            //新增阅读数
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/IncreaseViewCount?id=" + chapterId,
+            });
+
+            //异步获取文章评论
+            $.ajax({
+                type: "GET",
+                url: "/Chapters/GetComments?id=" + chapterId,
+                success: function (data) {
+                    if (data.count > 0) {
+                        var comments = $.parseJSON(data.comments);
+                        for (var i = 0; i < comments.length; i++) {
+                            var comment = comments[i];
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + comment.Id + '" class="layer"></a><a name="' + comment.Id + '" id="comment_anchor_' + comment.Id + '"></a><span class="comment_date">' + comment.PostTime + '</span> ' + comment.UserName + '</div><div class="feedbackCon"><div id="comment_body_' + comment.Id + '" class="blog_comment_body">' + comment.Comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                        }
+                    }
+                }
+            });
+
+            //检查是否登录
+            $.ajax({
+                type: "GET",
+                url: "/UserOperation/CheckLogin",
+                success: function (data) {
+                    if (data == false) {
+                        $('<div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);"  class="underline" onclick="login()">登录</a></div>').appendTo("#comment_form_container");
+                    }
+                    else {
+                        $('<div id="commentform_title">发表评论</div><span id="tip_comment" style="color:Red"></span><div class="commentbox_main"><div class="commentbox_title"><div class="commentbox_title_left">评论内容：</div><div class="commentbox_title_right"></div></div><div class="clear"></div><textarea id="tbCommentBody" class="comment_textarea"></textarea></div><p id="commentbox_opt"><input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论"></p>').appendTo("#comment_form_container");
+                        //点击提交评论
+                        $("#btn_comment_submit").click(function () {
+                            SubmitComment();
+                        });
+                    }
+                }
+            });
+
+            //提交评论
+            var SubmitComment = function () {
+                var comment = $("#tbCommentBody").val();
+                var chapterId = $("#chapterId").val();
+                if (comment.length <= 0) {
+                    alert("提交内容不能为空");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Chapters/SubComment",
+                    data: { chapterId: chapterId, comment: comment },
+                    success: function (data) {
+                        if (data.Status == "ok") {
+                            var time = data.Time;
+                            var userName = data.UserName;
+                            var id = data.Id;
+                            //var commentContent = data.Comment;
+                            $('<div class="feedbackItem"><div class="feedbackListSubtitle"><a href="#' + id + '" class="layer"></a><a name="' + id + '" id="comment_anchor_' + id + '"></a><span class="comment_date">' + time + '</span> ' + userName + '</div><div class="feedbackCon"><div id="comment_body_' + id + '" class="blog_comment_body">' + comment + '</div></div></div>').appendTo(".feedbackNoItems");
+                            $("#tbCommentBody").val("");  //清空
+                        }
+                        else {
+                            alert("评论失败了~");
+                        }
+                    }
+                });
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>

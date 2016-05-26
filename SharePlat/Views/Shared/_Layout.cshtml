@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @*<link href="/css/layoutstyle.css" rel="stylesheet" type="text/css" />*@
+    @*<link href="/css/reset.css" type="text/css" rel="Stylesheet" />*@
+    <link href="/css/screen_base.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    @RenderSection("style", false)
+</head>
+<body>
+    <div id="hd">
+        <div id="hd_nav">
+            &laquo;<a class="gray" href="http://www.cnblogs.com" title="程序员的分享家园">SharePlat</a>
+        </div>
+        <div id="login_area">  
+        [ <a href="/login.aspx?ReturnUrl=http://passport.cnblogs.com/">登录</a> · <a href="/register.aspx?ReturnUrl=http://passport.cnblogs.com/">注册</a> ]      
+        </div>
+    </div>
+    @RenderBody()
+    <div id="footer">
+        <a href="/AboutUS.aspx">关于SharePlat</a>
+        <a href="/ContactUs.aspx">联系我们</a>
+        <a href="http://www.cnblogs.com">SharePlat</a>版权所有 保留所有权利
+    </div>
+
+    @RenderSection("script", false)
+</body>
+</html>
