@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendMailTest", "SendMailTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePlat.Scheduler", "SharePlat.Scheduler\SharePlat.Scheduler.csproj", "{43A2E585-0198-4F87-B5BD-35155BBF8A10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UEditorTest", "UEditorTest\UEditorTest.csproj", "{76EAEA5D-3B46-40A6-97CE-CB6E701CBD0E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,10 +63,6 @@ Global
 		{43A2E585-0198-4F87-B5BD-35155BBF8A10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43A2E585-0198-4F87-B5BD-35155BBF8A10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43A2E585-0198-4F87-B5BD-35155BBF8A10}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76EAEA5D-3B46-40A6-97CE-CB6E701CBD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76EAEA5D-3B46-40A6-97CE-CB6E701CBD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76EAEA5D-3B46-40A6-97CE-CB6E701CBD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76EAEA5D-3B46-40A6-97CE-CB6E701CBD0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +70,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A532E0D1-8ACC-43BE-9312-5D43BF7A1610} = {14150E13-C219-47F0-88C8-25470975D864}
 		{67430061-1B9B-4B48-9D2A-9AEA74ACE7DD} = {14150E13-C219-47F0-88C8-25470975D864}
-		{76EAEA5D-3B46-40A6-97CE-CB6E701CBD0E} = {14150E13-C219-47F0-88C8-25470975D864}
 	EndGlobalSection
 EndGlobal
