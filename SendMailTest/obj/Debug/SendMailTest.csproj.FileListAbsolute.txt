@@ -1,0 +1,5 @@
+E:\文档\Code训练营\Projects\SharePlat\SendMailTest\bin\Debug\SendMailTest.exe.config
+E:\文档\Code训练营\Projects\SharePlat\SendMailTest\bin\Debug\SendMailTest.exe
+E:\文档\Code训练营\Projects\SharePlat\SendMailTest\bin\Debug\SendMailTest.pdb
+E:\文档\Code训练营\Projects\SharePlat\SendMailTest\obj\Debug\SendMailTest.exe
+E:\文档\Code训练营\Projects\SharePlat\SendMailTest\obj\Debug\SendMailTest.pdb
