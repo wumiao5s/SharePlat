@@ -1,0 +1,11 @@
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\MySqlConnectTest.exe.config
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\MySqlConnectTest.exe
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\MySqlConnectTest.pdb
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\MySql.Data.dll
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\SharePlat.DAL.dll
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\SharePlat.Model.dll
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\SharePlat.DAL.pdb
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\bin\Debug\SharePlat.Model.pdb
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\obj\Debug\MySqlConnectTest.csprojResolveAssemblyReference.cache
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\obj\Debug\MySqlConnectTest.exe
+E:\文档\Code训练营\Projects\SharePlat\MySqlConnectTest\obj\Debug\MySqlConnectTest.pdb
