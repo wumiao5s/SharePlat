@@ -1,0 +1,221 @@
+.first {
+	text-align: left; padding-bottom: 6px; margin: 30px 0px 0px 0px; padding-left: 20px; padding-right: 20px; font-family: 'Microsoft Yahei'; background: #55895b; color: #fff; clear: both; font-size: 20px; padding-top: 6px; border-radius: 4px
+}
+.second {
+	padding-bottom: 6px; margin: 10px 0px; padding-left: 20px; padding-right: 20px; font-family: 'Microsoft Yahei'; background: #93c8a2; color: #fff; clear: both; font-size: 18px; padding-top: 6px; border-radius: 4px
+}
+.third {
+	padding-bottom: 6px; margin: 15px 0px; padding-left: 20px; padding-right: 20px; font-family: 'Microsoft Yahei'; background: #c6efd2; color: #999; clear: both; font-size: 16px; padding-top: 6px; border-radius: 4px
+}
+.note {
+	padding-bottom: 15px; margin: 10px 0px; padding-left: 60px; padding-right: 20px; font-family: 'Microsoft Yahei'; background: url(http://images.cnblogs.com/cnblogs_com/richieyang/574044/o_yellow-pin.png) #fcfaa9 no-repeat 20px 0px; clear: both; font-size: 15px; padding-top: 15px; box-shadow: 0 0 8px #aaa
+}
+.demo {
+	text-align: left; padding-bottom: 6px; padding-left: 20px; padding-right: 20px; background: orange; color: #fff; clear: both; font-size: 16px; overflow: auto; padding-top: 6px; border-radius: 4px
+}
+blockquote {
+	border-left: #ccc 10px solid; padding-bottom: 0.5em; margin: 1.5em 10px; padding-left: 10px; width: 90%; padding-right: 10px; background: #f9f9f9; color: #888; padding-top: 0.5em
+}
+p{font-size:14px}
+.center {
+    text-align: center;
+}
+.postBody .list{
+list-style:initial;
+list-style-type:disc;
+color:#000;
+}
+.right-title{
+border-left-width:3px;
+border-left-color:#93c8a2;
+border-left-style:solid;
+padding-left:5px;
+}
+.wrong-title{
+border-left-width:3px;
+border-left-color:red;
+border-left-style:solid;
+padding-left:5px;
+}
+body {
+    padding:0;
+    margin:0;
+    font:14px/1.8 Georgia,Times New Roman,Times,sans-serif;
+    color:#000;
+}
+/*photo*/
+#blog_userface {
+margin: 0 0 5px 0;
+padding: 10px;
+text-align: center;
+}
+#blog_userface #blog_personal{
+font-size:12px;
+text-align:left;
+}
+
+#green_channel{
+border-color:#3399ff;
+border-width:2px;
+width:690px;
+font-size:14px;
+color:#3399ff;
+}
+
+
+.diggit {
+   display:block
+}
+
+
+.buryit {
+    display:block;
+}
+
+.diggword {
+    display:block;
+}
+#div_digg{
+margin-right:0;
+}
+
+
+/*评论标题*/
+.feedback_area_title {
+    padding:10px;
+    font-size:24px;
+    font-weight:bold;
+    color:#2daebf;
+    border-bottom:solid 6px #2daebf;
+}
+/*评论*/
+.feedbackItem {
+    font-size:14px;
+    line-height:24px;
+    margin:10px 0;
+    padding:20px;
+    background:#F2F2F2;
+    box-shadow:0 0 5px #aaa;
+}
+.feedbackListSubtitle {
+    font-size:12px;
+    color:#888;
+}
+.feedbackListSubtitle a {
+    color:#888;
+}
+.comment_quote {
+    background:#FCFAAC;
+    padding:15px;
+    border:1px solid #CCC;
+}
+.blog_comment_body{
+    color:#000;
+}
+/*发表评论标题*/
+#commentform_title {
+    color:#2daebf;
+    background-image:none;
+    background-repeat:no-repeat;
+    margin-bottom:10px;
+    padding:10px 20px 10px 10px;
+    font-size:24px;
+    font-weight:bold;
+    border-bottom:solid 6px #2daebf;
+}
+
+/*评论输入域*/
+.forFlow img{
+margin-top:0px;
+}
+#tbCommentBody {
+    font-family:'MIcrosoft Yahei';
+    margin-top:10px;
+    width:680px;
+    max-width:680px;
+    min-width:680px;
+    background:white;
+    color:#333;
+    border:2px solid #fff;
+    box-shadow:inset 0 0 8px #aaa;
+    padding:10px;
+    height:120px;
+    font-size:14px;
+    min-height:120px;
+}
+
+/*右侧*/
+#sideBar{
+font-size:12px;
+line-height:22px;
+}
+
+#footer {
+    font-size:12px;
+    text-align:center;
+    background:#2daebf;
+    color:#DDD;
+    font-size:14px;
+    margin-top:20px;
+    border-radius:4px
+}
+/*right*/
+#blogCalendar,#sidebar_search,#sidebar_imagecategory{
+display:none;
+}
+
+/*右侧浮动栏*/
+.scrollBtn {
+    position: fixed;
+    right: 15px;
+    bottom: 45px;
+    width: 54px;
+    _position: absolute;
+}
+
+    .scrollBtn a {
+        display: inline-block;
+        overflow: hidden;
+        width: 54px;
+        height: 54px;
+        -webkit-transition: opacity .5s ease;
+        -moz-transition: opacity .5s ease;
+        -o-transition: opacity .5s ease;
+        transition: opacity .5s ease;
+        text-align: center;
+        opacity: .6;
+        color: white;
+        background: url(http://images.cnblogs.com/cnblogs_com/richieyang/574044/o_o_gototop.png) no-repeat 0 0;
+        filter: Alpha(Opacity=60);
+    }
+
+    .scrollBtn li {
+        float: left;
+        overflow: hidden;
+        height: 54px;
+        margin-bottom: 5px;
+    }
+
+    .scrollBtn a:hover {
+        opacity: 1;
+        filter: Alpha(Opacity=100);
+    }
+
+.sB-comment a {
+    height: 17px;
+    padding-top: 34px;
+    padding-bottom: 3px;
+    background-position: 0 -59px;
+}
+
+.sB-share a {
+    background-position: 0 -118px;
+}
+
+.sB-goTop a {
+    background-position: 0 -177px;
+}
+/*other*/
+#cnblogs_post_body ol{
+padding-left:10px;
+}

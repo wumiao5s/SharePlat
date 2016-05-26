@@ -1,0 +1,119 @@
+body
+{
+	font-size:13px;
+}
+
+a 
+{
+	font-size:13px;
+}
+
+#sideleft
+{
+	margin-top:30px;
+}
+
+#sideright
+{
+	margin-top:50px;
+}
+
+.main_register
+{
+	margin-left:20px;
+}
+.post_context
+{
+	font-size:13px;
+}
+.post_context td
+{
+	height:28px;
+	line-height:28px;
+}
+
+.post_context .td_name
+{
+	text-align:left;
+	width:80px;
+}
+
+.td_name
+{
+	width:70px;
+	text-align:left;
+}
+.td_flag
+{
+	text-align:right;
+	width:14px;
+}
+
+h3.topic_title 
+{
+background:transparent url(http://passport.cnblogs.com/images/topic_bg_2.gif) no-repeat scroll left 50%;
+border-bottom:2px solid #BDCFDC;
+font-size:14px;
+padding-left:18px;
+margin-bottom:20px;
+}
+
+.input_default 
+{
+border:1px solid #6B9DC7;
+height:18px;
+line-height:18px;
+vertical-align:middle;
+width:180px;
+}
+
+.submit_block
+{
+border-top:2px solid #2A71A5;
+margin:20px auto 30px;
+padding-top:20px;
+position:relative;
+text-align:left;
+}
+
+.btn_submit 
+{
+background:transparent url(http://passport.cnblogs.com/images/btn_bg.gif) no-repeat scroll left bottom;
+border-width:0;
+color:White;
+cursor:pointer;
+font-size:14px;
+font-weight:bold;
+height:34px;
+line-height:30px;
+text-align:center;
+width:104px;
+margin-left:100px;
+}
+
+.main
+{
+	font-size:14px;
+}
+
+.lnk_btn
+{
+background:transparent url(http://passport.cnblogs.com/images/btn_bg.gif) no-repeat center center;
+color:white;
+font-size:14px;
+font-weight:bold;
+text-decoration:none;
+padding:10px 38px;
+}
+
+a.lnk_btn:link,a.lnk_btn:visited,a.lnk_btn:hover,a.lnk_btn:active{color: #FFF;text-decoration:none;}
+
+.return_block
+{
+border-top:2px solid #2A71A5;
+margin:20px auto 30px;
+padding-top:30px;
+position:relative;
+text-align:center;
+padding-left:80px;
+}
