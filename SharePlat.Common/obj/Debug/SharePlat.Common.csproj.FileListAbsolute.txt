@@ -1,0 +1,11 @@
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\SharePlat.Common.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\SharePlat.Common.pdb
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\ServiceStack.Common.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\ServiceStack.Interfaces.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\ServiceStack.Redis.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\ServiceStack.Text.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\SharePlat.Model.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\bin\Debug\SharePlat.Model.pdb
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\obj\Debug\SharePlat.Common.csprojResolveAssemblyReference.cache
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\obj\Debug\SharePlat.Common.dll
+E:\文档\Code训练营\Projects\SharePlat\SharePlat.Common\obj\Debug\SharePlat.Common.pdb
